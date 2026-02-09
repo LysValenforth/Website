@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact | Lines By Lin</title>
+    
+    <link rel="stylesheet" href="css/home.css">
+    <link href="https://fonts.googleapis.com/css2?family=Georgia&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* PAPER LAYOUT: Specific styles for the Contact Letter */
+        .contact-container {
+            max-width: 700px;
+            margin: 60px auto;
+            background: var(--paper-color); /* Cream background */
+            padding: 60px;
+            color: #2c2c2c;
+            border-radius: 4px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
+            border: 1px solid #e0dcd3;
+        }
+
+        .contact-header {
+            font-family: var(--font-heading);
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+            border-bottom: 2px solid var(--gold-accent);
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        .contact-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 40px;
+            color: #444;
+        }
+
+        /* EMAIL BUTTON STYLE */
+        .email-btn {
+            display: inline-block;
+            background-color: var(--bg-color); /* Dark Green */
+            color: var(--paper-color);
+            padding: 15px 35px;
+            text-decoration: none;
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            border-radius: 4px;
+            border: 1px solid var(--gold-accent);
+            transition: 0.3s;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .email-btn:hover {
+            background-color: var(--gold-accent);
+            color: var(--bg-color);
+            transform: translateY(-3px);
+        }
+
+        /* SOCIAL LINKS */
+        .social-section h3 {
+            font-family: var(--font-heading);
+            color: var(--accent-color); /* Terracotta */
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .social-list {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .social-list a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: bold;
+            font-size: 1rem;
+            border-bottom: 2px solid transparent;
+            transition: 0.3s;
+        }
+
+        .social-list a:hover {
+            color: var(--accent-color);
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        /* Ensure sidebar spacer works on this page too */
+        .sidebar-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .sidebar-spacer {
+            flex-grow: 1;
+        }
+    </style>
+</head>
+<body class="home-page">
+
+    <header class="navbar">
+        <div class="logo">Lines By Lin</div>
+
+        <nav class="main-nav">
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                
+                <li class="dropdown-item">
+                    <a href="#">Works ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="blogs/blog1.html">Blog</a></li>
+                        <li><a href="stories/story1.html">Story</a></li>
+                        <li><a href="#">Poems</a></li>
+                    </ul>
+                </li>
+
+                <li><a href="about.html">About</a></li>
+            </ul>
+        </nav>
+
+        <div class="menu-toggle" onclick="toggleSidebar()">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+    </header>
+
+    <aside id="sidebar" class="sidebar">
+        <button class="close-btn" onclick="toggleSidebar()">&times;</button>
+        <div class="sidebar-content">
+            <h3>Menu</h3>
+            <a href="home.html">Home</a>
+            <a href="about.html">About Me</a>
+            
+            <div class="sidebar-spacer"></div> 
+            
+            <div class="sidebar-divider"></div>
+            
+            <a href="contact.html" style="color: var(--gold-accent); font-weight: bold;">Contact</a>
+        </div>
+    </aside>
+
+    <main class="container">
+        <div class="contact-container">
+            <h1 class="contact-header">Get in Touch</h1>
+            
+            <p class="contact-text">
+                Whether you want to discuss a game development project, talk about coding struggles, 
+                or just say hello, I'd love to hear from you. My digital door is always open.
+            </p>
+
+            <a href="mailto:lixverino@gmail.com" class="email-btn">Send me an Email</a>
+
+            <div class="social-section">
+                <h3>Or find me here</h3>
+                <ul class="social-list">
+                    <li><a href="https://github.com/LysValenforth">Github</a></li>
+                    <li><a href="https://www.facebook.com/lixverino">Facebook</a></li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2026 Lines By Lin</p>
+        </div>
+    </footer>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

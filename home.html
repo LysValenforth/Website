@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Lin's World - A personal portfolio and blog about Game Development, Coding, and Creativity.">
+    <title>Lines By Lin | Home</title>
+    
+    <link rel="stylesheet" href="css/home.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Georgia&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="home-page">
+
+    <header class="navbar">
+        <div class="logo">Lines By Lin</div>
+
+        <nav class="main-nav">
+            <ul>
+                <li><a href="home.html" class="active">Home</a></li>
+                
+                <li class="dropdown-item">
+                    <a href="#">Works ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="blogs/blog1.html">Blog</a></li>
+                        <li><a href="stories/story1.html">Story</a></li>
+                        <li><a href="#">Poems</a></li>
+                    </ul>
+                </li>
+
+                <li><a href="about.html">About</a></li>
+            </ul>
+        </nav>
+
+        <div class="menu-toggle" onclick="toggleSidebar()">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+    </header>
+
+    <aside id="sidebar" class="sidebar">
+        <button class="close-btn" onclick="toggleSidebar()">&times;</button>
+        <div class="sidebar-content">
+            <h3>Menu</h3>
+            <a href="home.html">Home</a>
+            <a href="about.html">About Me</a>
+            <div class="sidebar-spacer"><div>
+            <div class="sidebar-divider"></div>
+            <a href="contact.html" class="contact-link">Contact</a>
+            <p>+63919 383 6894</p>
+        </div>
+    </aside>
+
+    <main class="container">
+        
+        <section class="hero-card">
+            <div class="hero-text">
+                <h1>Hi, I'm Lin.</h1>
+                <p>
+                   This website is a small space on the internet where I try to make sense of my thoughts by turning them into words. Here, you'll find a collection of my writing, from dreamy poems to pieces I like to think of as “literature.”
+                </p>
+
+                <p>
+                    A little digital escape where I can overthink, romanticize everyday things, and sometimes pretend I’ve got it all figured out through writing. Whether it came from a late-night burst of inspiration or a quiet moment, if it meant something to me, it might show up here.
+                </p>
+                <a href="about.html" class="explore-btn">Read About Me</a>
+            </div>
+            <div class="hero-image">
+                <img src="IMAGES/Lin.jpg" 
+                     alt="" 
+                     loading="lazy">
+            </div>
+        </section>
+
+        <h2 class="section-label">Latest Entries</h2>
+        <div class="projects-grid">
+
+            <article class="project-card">
+                <div class="card-image">
+                    <img src="IMAGES/space.jpg" 
+                         alt="Astronaut" loading="lazy">
+                </div>
+                <div class="card-content">
+                    <span class="category-tag">Blog</span>
+                    <h3>From Space Suits to Syntax Errors</h3>
+                    <div class="lines"><span></span><span></span></div> 
+                    <p class="card-excerpt">My processor just overheated. I sat there staring at the test paper...</p>
+                    <a href="blogs/blog3.html" class="read-more-btn">Read Entry</a>
+                </div>
+            </article>
+
+            <article class="project-card">
+                <div class="card-image">
+                    <img src="IMAGES/rainbow.jpg" 
+                         alt="Code on a screen" loading="lazy">
+                </div>
+                <div class="card-content">
+                    <span class="category-tag">Blog</span>
+                    <h3>Where the Rainbow Ends</h3>
+                    <div class="lines"><span></span><span></span></div>
+                    <p class="card-excerpt">Looking back, my childhood in the province wasn't just good...</p>
+                    <a href="blogs/blog2.html" class="read-more-btn">Read Entry</a>
+                </div>
+            </article>
+
+            <article class="project-card">
+                <div class="card-image">
+                    <img src="IMAGES/Love.png" 
+                         alt="Person working on laptop" loading="lazy">
+                </div>
+                <div class="card-content">
+                    <span class="category-tag">Blog</span>
+                    <h3>My Toxic Love Triangle</h3>
+                    <div class="lines"><span></span><span></span></div>
+                    <p class="card-excerpt">My complicated relationship with AI and traditional learning.</p>
+                    <a href="blogs/blog1.html" class="read-more-btn">Read Entry</a>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <section class="quote-banner">
+        <p>
+            “True growth begins the moment we stop chasing who we think we should be, 
+            and start listening to the quiet truth of who we already are.”
+        </p>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2026 Lines By Lin</p>
+            <div class="social-links">
+                <a href="https://github.com/LysValenforth">Github</a> • <a href="https://www.facebook.com/lixverino">Facebook</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

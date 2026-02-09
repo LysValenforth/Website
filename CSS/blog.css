@@ -1,0 +1,156 @@
+/* --- Blog Specific Styles --- */
+
+/* Adjust container to sit under the sticky navbar */
+body {
+    margin: 0;
+    font-family: var(--font-body);
+    color: var(--paper-color);
+    background-color: var(--bg-color);
+    
+    /* YOUR ORIGINAL DAMASK WALLPAPER RESTORED */
+    background-image: linear-gradient(rgba(26, 40, 31, 0.85), rgba(26, 40, 31, 0.85)), 
+                      url('https://cdn.magicdecor.in/com/2023/10/17181656/Dark-Green-Damask-Wallpaper-for-Walls-710x488.jpg');
+    
+    background-repeat: repeat;
+    background-attachment: fixed; /* Keeps image still while scrolling */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.blog-container {
+    max-width: 800px; /* Optimal reading width */
+    margin: 40px auto; /* Centered with space top/bottom */
+    background-color: var(--paper-color);
+    padding: 60px 80px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+    position: relative;
+}
+
+/* Typography for the Article Header */
+.article-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.category-tag {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent-color);
+    font-weight: bold;
+    display: block;
+    margin-bottom: 15px;
+}
+
+.article-header h1 {
+    font-family: var(--font-heading);
+    font-size: 2.8rem;
+    color: #1a1a1a;
+    margin: 0 0 10px 0;
+    line-height: 1.2;
+}
+
+.meta-date {
+    font-family: var(--font-body);
+    font-style: italic;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.divider {
+    border: 0;
+    height: 1px;
+    background: var(--gold-accent);
+    margin: 30px auto;
+    width: 60%;
+}
+
+/* Content Typography */
+.content-body h2 {
+    font-family: var(--font-heading);
+    color: var(--bg-color);
+    font-size: 1.6rem;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--gold-accent);
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+.content-body p {
+    font-family: var(--font-body);
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: #333;
+    margin-bottom: 25px;
+    text-align: justify;
+}
+
+/* Images */
+.image-container {
+    margin: 40px 0;
+    text-align: center;
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.caption {
+    font-size: 0.9rem;
+    color: #777;
+    margin-top: 10px;
+    font-style: italic;
+}
+
+/* Blog Pagination (Next/Prev Buttons) */
+.pagination {
+    margin-top: 60px;
+    padding-top: 30px;
+    border-top: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+}
+
+.pagination a {
+    text-decoration: none;
+    font-family: var(--font-heading);
+    font-weight: bold;
+    color: var(--bg-color);
+    transition: color 0.3s;
+}
+
+.pagination a:hover {
+    color: var(--accent-color);
+}
+
+.pagination .disabled {
+    color: #ccc;
+    pointer-events: none;
+}
+
+/* Footer override for blog page context */
+footer p {
+    color: var(--gold-accent);
+    text-align: center;
+    margin-top: 40px;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .blog-container {
+        padding: 40px 25px;
+        margin: 20px;
+        width: auto;
+    }
+    
+    .article-header h1 {
+        font-size: 2rem;
+    }
+}

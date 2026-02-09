@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>From Space Suits to Syntax Errors | Lines By Lin</title>
+    <link rel="stylesheet" href="../css/home.css">
+    <link rel="stylesheet" href="../css/blog.css">
+    <link href="https://fonts.googleapis.com/css2?family=Georgia&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="blog-page">
+
+    <header class="navbar">
+        <div class="logo">Lines By Lin</div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="../home.html">Home</a></li>
+                <li class="dropdown-item">
+                    <a href="#" class="active">Works ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="blog1.html">Blog</a></li>
+                        <li><a href="#">Story</a></li>
+                        <li><a href="#">Poems</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">About</a></li>
+            </ul>
+        </nav>
+        <div class="menu-toggle" onclick="toggleSidebar()">
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        </div>
+    </header>
+
+    <aside id="sidebar" class="sidebar">
+        <button class="close-btn" onclick="toggleSidebar()">&times;</button>
+        <div class="sidebar-content">
+            <h3>Menu</h3>
+            <a href="../home.html">Home</a>
+            <a href="blog1.html">Latest Log</a>
+            <a href="#">About Me</a>
+            <div class="sidebar-divider"></div>
+            <a href="#">Contact</a>
+        </div>
+    </aside>
+
+    <main class="blog-container">
+        <article class="content-body">
+            
+            <header class="article-header">
+                <span class="category-tag">Game Development</span>
+                <h1>From Space Suits to Syntax Errors</h1>
+                <p class="meta-date">February 6, 2026</p>
+            </header>
+            
+            <hr class="divider">
+
+            <h2>Introduction</h2>
+            <p>
+                My career plan wasn't always to sit in a dark room bathing in monitor radiation. Originally, five-year-old me was convinced I was going to be an <strong>Astronaut</strong>. It seemed perfect: floating in zero gravity, looking cool, and leaving the planet whenever things got awkward. Then I found out you need advanced math and physical fitness, so that dream died faster than a character in <em>Dark Souls</em>. Naturally, I pivoted to the default setting for any Filipino kid: I wanted to be a <strong>Nurse</strong>.
+            </p>
+            <p>
+                But here's the thing—it wasn't the blood that stopped me. I can handle gore; I’ve played enough <em>Resident Evil</em> to stomach that. It was the realization that in this country, being a nurse is basically playing a survival game on "Hard Mode" with zero loot drops. I looked at the workload versus the salary and realized that nurses here are treated like NPCs: essential for the quest, but overworked, underpaid, and running on nothing but caffeine and prayers. I didn't want a career where the winning strategy is "leave the country." So, I traded the scrubs for a mechanical keyboard. I figured if I’m going to be stressed and sleepless, I might as well do it while building my own worlds as a Game Developer.
+            </p>
+
+            <div class="image-container">
+                <img src="../IMAGES/space.jpg" alt="Coding setup and coffee">
+                <p class="caption"></p>
+            </div>
+
+            <h2>Body</h2>
+            <p>
+                But let’s cut the inspirational montage music for a second. The road to being a Game Developer is currently blocked by a massive obstacle: <strong>My Grades</strong>. Specifically, this one major subject that is currently kicking my teeth in. I recently got a low score on an exam, and honestly? It wasn't even because I didn't know the material. It was the dreaded "Mind Block."
+            </p>
+            <p>
+                You know that feeling when your PC runs too many Chrome tabs and just freezes? That was my brain. Between the projects, the lack of sleep, and the pressure to perform, my processor just overheated. I sat there staring at the test paper, knowing the answer was somewhere in my head, but my brain threw a <em>404 Error: File Not Found</em>. It’s frustrating because I have big dreams. I want to create immersive stories and gameplay mechanics that blow people’s minds, but right now, I can barely handle the mechanics of a "Wait, Notify" thread synchronization without panic-sweating.
+            </p>
+            <p>
+                I have to pass this subject. I can’t let my future game studio die because I couldn't handle the stress of a college semester. I realized that being a Game Dev isn't just about creativity; it's about logic, resilience, and fixing things when they break—including my own study habits. I need to clear this level, even if I have to spam potions (coffee) to do it.
+            </p>
+
+            <h2>Conclusion</h2>
+            <p>
+                So, NASA, sorry I ghosted you. Hospitals, you're safer without me. My destiny is here, wrestling with curly braces and semicolon errors.
+            </p>
+            <p>
+                This low score is just a glitch in the early game. I’m going to patch it, optimize my workflow, and eventually, I’m going to make a game so good even the overworked nurses will play it on their break. But first... I really need to study.
+            </p>
+
+        </article>
+
+        <div class="pagination">
+            <a href="blog2.html" class="prev-post">← Previous: Where the Rainbow Ends</a>
+            <a href="#" class="next-post disabled">Next: Coming Soon →</a>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Lines By Lin.</p>
+    </footer>
+
+    <script>
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+    </script>
+</body>
+</html>

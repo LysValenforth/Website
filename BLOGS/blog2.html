@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Where the Rainbow Ends | Lines By Lin</title>
+    <link rel="stylesheet" href="../css/home.css">
+    <link rel="stylesheet" href="../css/blog.css">
+    <link href="https://fonts.googleapis.com/css2?family=Georgia&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="blog-page">
+
+    <header class="navbar">
+        <div class="logo">Lines By Lin</div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="../home.html">Home</a></li>
+                <li class="dropdown-item">
+                    <a href="#" class="active">Works ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="blog1.html">Blog</a></li>
+                        <li><a href="#">Story</a></li>
+                        <li><a href="#">Poems</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">About</a></li>
+            </ul>
+        </nav>
+        <div class="menu-toggle" onclick="toggleSidebar()">
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        </div>
+    </header>
+
+    <aside id="sidebar" class="sidebar">
+        <button class="close-btn" onclick="toggleSidebar()">&times;</button>
+        <div class="sidebar-content">
+            <h3>Menu</h3>
+            <a href="../home.html">Home</a>
+            <a href="blog1.html">Latest Log</a>
+            <a href="#">About Me</a>
+            <div class="sidebar-divider"></div>
+            <a href="#">Contact</a>
+        </div>
+    </aside>
+
+    <main class="blog-container">
+        <article class="content-body">
+            
+            <header class="article-header">
+                <span class="category-tag">Memoir</span>
+                <h1>Where the Rainbow Ends</h1>
+                <p class="meta-date">February 5, 2026</p>
+            </header>
+            
+            <hr class="divider">
+
+            <h2>Introduction</h2>
+            <p>
+                Looking back, my childhood in the province wasn't just good; it was a constant, delirious high of happiness. I remember running through the fields behind my Lola’s house, my chest bursting with laughter that felt like it would never end. The world was a playground built specifically for me. If I scraped my knee, Lola was there with a warm hand and a sweet treat to make the pain vanish. We didn't have much, but I didn't know that. I thought we were rich because I had the sun, the mud, and the endless energy of being young. I truly believed that life was just one long game of <em>patintero</em>, where even if you got tagged, you could always just start over.
+            </p>
+
+            <div class="image-container">
+                <img src="../IMAGES/rainbow.jpg" alt="Childhood memories in the province">
+                <p class="caption">The days when time moved slower.</p>
+            </div>
+
+            <h2>Body</h2>
+            <p>
+                That era of my life feels like a vivid, technicolor dream now. I remember the afternoons spent waiting for the sound of the <em>sorbetero</em> bell, believing that a scoop of cheese ice cream on a stale bun was the peak of culinary luxury. I remember catching spiders in matchboxes and feeling like a beast tamer, or lying on the bamboo floor while the electric fan hummed a lullaby, convinced that the only job I would ever have was to be happy. I never saw the bills piling up on the table. I never noticed the way the adults whispered about rice prices or harvest yields. I was insulated in a bubble of pure joy, protected by my elders who silently absorbed the blows of the world so I wouldn't have to feel them.
+            </p>
+            <p>
+                But growing up is a slow, painful process of waking up. Now that I am in college, the bubble has not just popped; it has been shredded. The silence of the province has been replaced by the frantic noise of deadlines and the hum of my laptop fan at 3 AM. I sit here, staring at lines of code or endless pages of readings, and the clarity is suffocating. I finally understand the value of money—not as a concept, but as a terrifying reality. I catch myself calculating the cost of my meals against my allowance, realizing that the "simple life" I enjoyed was paid for by the sweat and sacrifice of people I never properly thanked.
+            </p>
+            <p>
+                The world isn't soft anymore. It's a jagged place of expectations and performance. There are no "cupcakes and rainbows" here; there is only the pressure to succeed, the fear of failure, and the realization that mediocrity is a death sentence in this economy. I used to think stress was just being called on in class; now I know it as a physical weight that sits on my chest when I try to sleep. The colorful imagination that once turned shadows into monsters has been repurposed to imagine worst-case scenarios for my future. I am learning, painfully, that comfort is expensive, and peace of mind is a luxury I can no longer afford.
+            </p>
+
+            <h2>Conclusion</h2>
+            <p>
+                I often close my eyes and try to go back to that backyard, to the smell of Lola’s cooking and the feeling of grass under my feet. I want to tell that little kid to run slower, to laugh louder, to hold onto that moment with a death grip.
+            </p>
+            <p>
+                Because once you learn that the world isn't fair, once you see the strings holding up the scenery, you can never unsee them. I am building a future, yes, but I would give anything to go back to the days when I didn't know how much that future cost.
+            </p>
+
+        </article>
+
+        <div class="pagination">
+            <a href="blog1.html" class="prev-post">← Previous: Toxic Love Triangle</a>
+            <a href="blog3.html" class="next-post">Next: Space Suits to Syntax →</a>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Lines By Lin.</p>
+    </footer>
+
+    <script>
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+    </script>
+</body>
+</html>

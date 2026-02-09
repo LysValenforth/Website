@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Dinawanao, Lixter Nino D.">
+    <title>Biography | Lin's World</title>
+    
+    <link rel="stylesheet" href="css/home.css">
+    <link href="https://fonts.googleapis.com/css2?family=Georgia&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Specific Styles for the Biography Paper Layout */
+        .bio-container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: var(--paper-color); /* This uses the Cream color from home.css */
+            padding: 60px;
+            color: #2c2c2c;
+            border-radius: 4px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); /* Slightly darker shadow */
+            line-height: 1.8;
+            text-align: justify;
+        }
+
+        /* Anchor Menu (Link within a link) */
+        .anchor-menu {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            border-top: 1px solid var(--gold-accent);
+            border-bottom: 1px solid var(--gold-accent);
+            background: rgba(0,0,0,0.02);
+        }
+
+        .anchor-menu a {
+            text-decoration: none;
+            color: var(--accent-color); /* Uses Terracotta from home.css */
+            font-family: var(--font-heading);
+            font-weight: bold;
+            margin: 0 15px;
+            font-size: 1.1rem;
+            transition: 0.3s;
+        }
+        .anchor-menu a:hover { color: var(--bg-color); }
+        
+        /* Section Styling */
+        .bio-section { 
+            margin-bottom: 60px; 
+            scroll-margin-top: 120px; /* Offset for sticky header */
+        }
+
+        .bio-section h2 {
+            font-family: var(--font-heading);
+            color: var(--bg-color); /* Uses Dark Green from home.css */
+            border-bottom: 2px solid var(--gold-accent);
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        /* Images */
+        .bio-img { 
+            width: 100%; 
+            max-width: 600px; 
+            display: block; 
+            margin: 30px auto; 
+            border-radius: 4px; 
+            border: 5px solid white; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
+        }
+
+        /* Go To Top Link */
+        .go-top { 
+            display: block; 
+            text-align: right; 
+            color: var(--gold-accent); 
+            text-decoration: none; 
+            font-size: 0.9rem; 
+            font-weight: bold;
+            margin-top: 10px; 
+        }
+        .go-top:hover { text-decoration: underline; color: var(--accent-color); }
+    </style>
+</head>
+
+<body id="top" class="home-page"> <header class="navbar">
+        <div class="logo">Lin's World</div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li class="dropdown-item">
+                    <a href="#">Works ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="blogs/blog1.html">Blog</a></li>
+                        <li><a href="#">Story</a></li>
+                        <li><a href="#">Poems</a></li>
+                    </ul>
+                </li>
+                <li><a href="about.html" class="active">About</a></li>
+            </ul>
+        </nav>
+        <div class="menu-toggle" onclick="toggleSidebar()">
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        </div>
+    </header>
+
+    <aside id="sidebar" class="sidebar">
+        <button class="close-btn" onclick="toggleSidebar()">&times;</button>
+        <div class="sidebar-content">
+            <h3>Menu</h3>
+            <a href="home.html">Home</a>
+            <a href="about.html">Biography</a>
+            <div class="sidebar-divider"></div>
+            <a href="blogs/blog1.html">Latest Blog</a>
+        </div>
+    </aside>
+
+    <main class="container">
+        <div class="bio-container">
+            
+            <h1 style="text-align: center; font-family: var(--font-heading); font-size: 2.5rem; margin-bottom: 10px;">
+                BIOGRAPHY
+            </h1>
+            
+            <div class="anchor-menu">
+                <a href="#childhood">Childhood</a> • 
+                <a href="#teenage">Teenage Years</a> • 
+                <a href="#college">College Years</a>
+            </div>
+
+            <div id="childhood" class="bio-section">
+                <h2>Childhood</h2>
+                <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1000&auto=format&fit=crop" alt="Fields of the province" class="bio-img">
+                
+                <p>
+                    I grew up in a quiet province called <b>Mahayag</b> in Zamboanga del Sur. My parents were away, so I lived with my <i>Lolo</i> and <i>Lola</i> in their simple home. Life there was very peaceful, but honestly, it was quite lonely sometimes. Our house was on a farm, and the neighbors were really far away from us. Because of the distance, it was rare to see other kids my age outside. Most of the time, my only playmates were the cats and dogs in our yard. 
+                </p>
+                <p>
+                    The only time our house felt lively was when my cousins came to visit us. One time, I even threw my cousin's slippers away because I didn't want them to go home. I cried so hard that time because I knew that I would get lonely again once they left. But because I was mostly alone, I learned to love the small things. I loved sitting on the porch just watching the chickens eat their food. Feeding the pigs became a daily routine that I actually looked forward to. My favorite bonding moment was going fishing with my <i>Lolo</i> nearby. Sometimes we caught a fish and sometimes we didn't. I also remember a specific season when many butterflies would suddenly appear inside our house. It was such a beautiful sight since there were many butterflies with different colors. When it was almost nighttime, my grandfather and I would walk back home together slowly. As we approached, I could smell the delicious food my <i>Lola</i> was cooking for us. It was sad not having playmates, but looking back, my childhood was truly beautiful.
+                </p>
+                
+                <a href="#top" class="go-top">↑ GO TO TOP</a>
+            </div>
+
+            <div id="teenage" class="bio-section">
+                <h2>Teenage Years</h2>
+                <img src="IMAGES/Friends.jpg" alt="School friends" class="bio-img">
+
+                <p>
+                    When I was a teenager, high school was full of fun, awkward moments, and unforgettable memories. I remember back in Grade 8, I joined a school pageant just to be exempted from some of my subjects. Walking on that stage was terrifying, and I honestly regretted signing up immediately. My knees were shaking the whole time, and I felt so shy in front of the crowd. However, it remains a fun memory because it was my first time trying something so brave. 
+                </p>
+                <p>
+                    High school was very different from the quiet life I had in the province. I made new friends who were loud, crazy, and always ready for fun. We loved hanging out at the canteen during recess just to talk about random things. After school, my friends and I often went to <b>Lemon Square</b> to buy food and play mobile games. We would scream in excitement whenever we won a tough match together. I also remember that I really liked my Science and Math teacher back then. I would always raise my hand during class just to catch her attention. I even studied so hard just so I could answer many of her questions correctly. It makes me laugh now thinking about the effort I made just to impress her. Then, the <i>COVID-19</i> pandemic suddenly arrived and changed everything for us. It was really sad because I wasn’t able to enjoy the rest of my high school life. We were stuck at home and missed out on many events we were looking forward to. Despite the abrupt ending, I am still grateful for the short time we had together. High school was incomplete, but the memories we made before the lockdown are forever.
+                </p>
+                
+                <a href="#top" class="go-top">↑ GO TO TOP</a>
+            </div>
+
+            <div id="college" class="bio-section">
+                <h2>College Years</h2>
+                <img src="https://images.unsplash.com/photo-1555099962-4199c345e5dd?q=80&w=1000&auto=format&fit=crop" alt="Coding monitor" class="bio-img">
+
+                <p>
+                    Stepping into college was a confusing time because my plans suddenly changed. I actually wanted to study <b>Nursing</b> to help take care of sick people. But I only applied to two schools, which were <b>PLM</b> and <b>UE</b>, hoping for the best. Sadly, there were no slots left for nursing at PLM, which really broke my heart. Since I had limited options, I decided to enroll at <b>UE</b> instead. I ended up taking <b>Computer Science</b>, a path I never really expected to walk on. 
+                </p>
+                <p>
+                    I quickly realized that this course was much harder than I imagined. Programming is not just about typing; it requires deep logic and patience. I remember feeling happy when I wrote my first code, but that was just the start. There are days when I stare at my screen for hours finding a missing semicolon. It is very frustrating when the program has errors and I cannot fix them. I often stay up very late at night just to finish my coding assignments. Sometimes I forget to eat or sleep because I am too focused on the monitor. Thankfully, I met new friends who are also struggling with the same hard subjects. Aside from coding, I also enjoy learning how to design layouts and create wireframes. There are moments when I honestly ask myself if this course is right for me. But every time I finally solve a bug, I feel a rush of excitement. I am learning to accept this new path and not give up on challenges. I know that all these sacrifices and sleepless nights will be worth it someday. Although I didn't become a nurse, I am excited to become a successful developer now.
+                </p>
+                
+                <a href="#top" class="go-top">↑ GO TO TOP</a>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Lines By Lin.</p>
+    </footer>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
