@@ -1,0 +1,220 @@
+/* ── Nav icons ──────────────────────────────────────────────── */
+.nav-icon {
+  width: 18px !important;
+  height: 18px !important;
+  flex-shrink: 0;
+  opacity: 0.7;
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  vertical-align: middle;
+}
+.nav-link:hover .nav-icon,
+.nav-link.active .nav-icon { opacity: 1; transform: scale(1.08); }
+
+.nav-logo .nav-icon {
+  width: 34px !important;
+  height: 34px !important;
+  filter: drop-shadow(0 2px 6px rgba(47,93,80,.2));
+  transition: transform var(--transition-normal);
+}
+.nav-logo:hover .nav-icon { transform: scale(1.06); }
+
+.dropdown-item .nav-icon { opacity: 0.6; }
+.dropdown-item:hover .nav-icon { opacity: 1; }
+
+/* ── Page header — clean icon badge + subtle gradient wash ──── */
+.page-header {
+  position: relative;
+  overflow: hidden;
+}
+
+
+
+
+.page-header-content {
+  position: relative;
+  z-index: 1;
+  animation: ph-fade-in .5s ease both;
+}
+
+@keyframes ph-fade-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Title — icon badge inline */
+.page-header h1 {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.ph-icon {
+  width: 44px;
+  height: 44px;
+  background: rgba(255,255,255,0.08);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,255,255,0.12);
+  flex-shrink: 0;
+}
+.ph-icon svg {
+  width: 22px; height: 22px;
+  color: var(--cream);
+  opacity: 0.88;
+}
+
+/* Subtitle indent — aligns with title text after icon */
+.page-header p {
+  padding-left: 0;
+}
+
+/* Thin horizontal rule after h1 */
+.page-header-content h1 {
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  margin-bottom: 12px;
+}
+
+
+
+/* ── Hero — ambient gradient only, editorial vertical rule ──── */
+.hero { overflow: hidden; }
+
+
+
+/* Editorial vertical dividing rule — removed */
+
+.hero-content { position: relative; z-index: 1; }
+
+/* ── Scroll cue — vertical text + line, left edge ───────────── */
+.hero-scroll-cue {
+  position: absolute;
+  bottom: var(--space-md);
+  left: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  animation: cue-appear 1s ease 1.2s both;
+  z-index: 1;
+  pointer-events: none;
+}
+@keyframes cue-appear {
+  from { opacity: 0; }
+  to   { opacity: 0.35; }
+}
+.hero-scroll-cue-line {
+  width: 1px;
+  height: 44px;
+  background: linear-gradient(to bottom, rgba(201,166,91,0.5), transparent);
+}
+.hero-scroll-cue-label {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: rgba(201,166,91,0.6);
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+/* ── About art — offset border frame ───────────────────────── */
+.about-art-frame {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+.about-art-frame img { position: relative; z-index: 1; }
+.about-art-frame::after {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: -14px;
+  bottom: -14px;
+  border: 1px solid rgba(201,166,91,0.25);
+  border-radius: 0;
+  opacity: 1;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* footer-logo — no icon */
+
+/* ── Poems page — italic serif subtitle ─────────────────────── */
+body[data-category="poem"] .page-header p {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-size: var(--text-xl);
+}
+
+/* ── Stories page — italic serif subtitle ───────────────────── */
+body[data-category="story"] .page-header p {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+}
+
+/* ── Beats — subtle waveform at header bottom ───────────────── */
+.beats-waveform {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 32px;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+/* ── Mediahub category cards ────────────────────────────────── */
+.mediahub-cat-card { position: relative; }
+.mediahub-cat-card .cat-icon-wrap {
+  width: 56px; height: 56px;
+  margin: 0 auto var(--space-sm);
+  background: rgba(201,166,91,.08);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(201,166,91,.12);
+  transition: background var(--transition-normal), border-color var(--transition-normal);
+}
+.mediahub-cat-card:hover .cat-icon-wrap {
+  background: rgba(201,166,91,.15);
+  border-color: rgba(201,166,91,.3);
+}
+.mediahub-cat-card img {
+  margin: 0 !important;
+  width: 28px !important;
+  height: 28px !important;
+}
+
+
+/* ── Prevent page-header from bleeding into sticky nav ─────── */
+.page-header {
+  isolation: isolate;
+  z-index: 1;
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .page-header h1 { font-size: var(--text-3xl); }
+  .ph-icon { width: 36px; height: 36px; }
+  .page-header p { padding-left: 0; }
+  .hero::after { display: none; }
+  .hero-scroll-cue { display: none; }
+  .about-art-frame::after { display: none; }
+}
+
+
+
+
+
+/* Bio hero — solid black, no image, no gradient */
+.bio-hero {
+  background: #0F0F10 !important;
+  background-image: none !important;
+}
+.bio-hero::before {
+  display: none !important;
+}

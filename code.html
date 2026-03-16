@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code — LINESBYLIN</title>
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cinzel+Decorative:wght@400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/page-enhancements.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/tsushima-theme.css">
+  <style>
+    /* Code hero */
+    .code-hero { background:var(--fog-white,#E7E5DF); border-bottom:1px solid rgba(0,0,0,.08); padding:80px 0 56px; }
+    .code-hero-inner { max-width:760px; }
+    .code-eyebrow { font-family:'Cinzel',serif; font-size:.6rem; font-weight:500; letter-spacing:.26em; text-transform:uppercase; color:var(--ghost-crimson,#D64545); display:block; margin-bottom:12px; }
+    .code-hero h1 { font-family:'Cinzel',serif; font-size:clamp(1.6rem,4vw,2.4rem); color:var(--panel-black,#0F0F10); line-height:1.25; margin-bottom:14px; font-weight:400; letter-spacing:.06em; }
+    .code-hero p { font-family:'EB Garamond',serif; font-style:italic; font-size:1.1rem; color:#5A5852; line-height:1.75; max-width:540px; }
+
+    /* Stats */
+    .code-stats { display:flex; gap:48px; flex-wrap:wrap; margin-top:28px; padding-top:24px; border-top:1px solid rgba(0,0,0,.08); }
+    .code-stat { display:flex; flex-direction:column; gap:3px; }
+    .code-stat-num { font-family:'Cinzel',serif; font-size:1.5rem; color:var(--ghost-crimson,#D64545); line-height:1; font-weight:400; letter-spacing:.04em; }
+    .code-stat-label { font-family:'Cinzel',serif; font-size:.56rem; font-weight:500; color:#8E8C85; text-transform:uppercase; letter-spacing:.14em; }
+
+    /* Filter */
+    .filter-bar { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:40px; }
+    .filter-btn { font-family:'Cinzel',serif; font-size:.58rem; font-weight:500; letter-spacing:.14em; text-transform:uppercase; padding:7px 18px; border:1px solid rgba(0,0,0,.15); background:var(--fog-white,#E7E5DF); color:#8E8C85; cursor:pointer; transition:all .18s; }
+    .filter-btn:hover { border-color:var(--ghost-crimson,#D64545); color:var(--ghost-crimson,#D64545); }
+    .filter-btn.active { background:var(--panel-black,#0F0F10); border-color:var(--panel-black,#0F0F10); color:var(--samurai-gold,#C9A65B); }
+
+    /* Projects grid */
+    .projects-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:24px; }
+    @media(max-width:640px){ .projects-grid { grid-template-columns:1fr; } }
+
+    /* Project card */
+    .project-card { background:var(--fog-white,#E7E5DF); border:1px solid rgba(0,0,0,.1); overflow:hidden; display:flex; flex-direction:column; transition:all .22s; }
+    .project-card:hover { transform:translate(-3px,-3px); box-shadow:6px 6px 0 rgba(0,0,0,.08); border-color:rgba(0,0,0,.2); }
+    .project-card.hidden { display:none; }
+
+    .project-banner { height:140px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; flex-shrink:0; }
+    .project-banner-icon { font-size:2.8rem; z-index:1; }
+    .banner-green { background:linear-gradient(135deg,#2F5D50,#4a8a78); }
+    .banner-blue  { background:linear-gradient(135deg,#A7C4BC,#7aa9a0); }
+    .banner-moss  { background:linear-gradient(135deg,#1E3D36,#2F5D50); }
+    .banner-beige { background:linear-gradient(135deg,#E8DCC8,#d4c4a8); }
+    .banner-teal  { background:linear-gradient(135deg,#4a8a78,#A7C4BC); }
+    .banner-dark  { background:linear-gradient(135deg,#1E3D36,#0d1f1b); }
+
+    .project-status { position:absolute; top:10px; right:10px; font-family:'Cinzel',serif; font-size:.5rem; font-weight:500; text-transform:uppercase; letter-spacing:.1em; padding:3px 8px; z-index:2; }
+    .status-live     { background:rgba(255,255,255,.92); color:var(--panel-black,#0F0F10); }
+    .status-wip      { background:rgba(255,255,255,.92); color:#7a4700; }
+    .status-archived { background:rgba(0,0,0,.5); color:#ccc; }
+
+    .project-body { padding:20px; display:flex; flex-direction:column; gap:8px; flex:1; }
+    .project-title { font-family:'Cinzel',serif; font-size:1rem; color:var(--panel-black,#0F0F10); line-height:1.35; font-weight:400; letter-spacing:.04em; }
+    .project-desc { font-family:'EB Garamond',serif; font-style:italic; font-size:.95rem; color:#5A5852; line-height:1.65; flex:1; }
+    .project-tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:4px; }
+    .project-tag { font-family:'Cinzel',serif; font-size:.5rem; font-weight:500; letter-spacing:.1em; text-transform:uppercase; padding:3px 9px; background:rgba(0,0,0,.06); color:var(--panel-black,#0F0F10); }
+    .project-tag.tag-js      { background:rgba(247,223,30,.15); color:#6b5500; }
+    .project-tag.tag-ts      { background:rgba(49,120,198,.1);  color:#1d4f8a; }
+    .project-tag.tag-py      { background:rgba(55,118,171,.12); color:#1e4e73; }
+    .project-tag.tag-html    { background:rgba(213,90,49,.1);   color:#6b2000; }
+    .project-tag.tag-react   { background:rgba(97,218,251,.12); color:#0b687a; }
+    .project-tag.tag-firebase{ background:rgba(255,160,0,.12);  color:#6b3800; }
+    .project-tag.tag-css     { background:rgba(38,77,228,.08);  color:#1b3799; }
+
+    .project-links { display:flex; gap:8px; padding-top:14px; border-top:1px solid rgba(0,0,0,.08); margin-top:8px; }
+    .project-link { display:inline-flex; align-items:center; gap:5px; font-family:'Cinzel',serif; font-size:.56rem; font-weight:500; letter-spacing:.1em; text-transform:uppercase; color:var(--panel-black,#0F0F10); text-decoration:none; padding:6px 14px; border:1px solid rgba(0,0,0,.15); background:transparent; transition:all .18s; }
+    .project-link:hover { background:var(--panel-black,#0F0F10); color:var(--samurai-gold,#C9A65B); border-color:var(--panel-black,#0F0F10); }
+    .project-link-live { background:var(--panel-black,#0F0F10); color:var(--samurai-gold,#C9A65B); border-color:var(--panel-black,#0F0F10); }
+    .project-link-live:hover { background:var(--ghost-crimson,#D64545); border-color:var(--ghost-crimson,#D64545); color:#fff; }
+
+    .projects-empty { grid-column:1/-1; text-align:center; padding:80px; color:#8E8C85; font-family:'EB Garamond',serif; font-style:italic; font-size:1rem; }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">LINESBYLIN</a>
+    <ul class="nav-menu" id="nav-menu">
+      <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+      <li class="nav-item"><a href="index.html#about" class="nav-link">About</a></li>
+      <li class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle active">Work</a>
+        <div class="dropdown-menu">
+          <a href="blog.html" class="dropdown-item">Blog</a>
+          <a href="poems.html" class="dropdown-item">Poems</a>
+          <a href="stories.html" class="dropdown-item">Stories</a>
+          <a href="biography.html" class="dropdown-item">Biography</a>
+          <a href="code.html" class="dropdown-item">Code</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle">MediaHub</a>
+        <div class="dropdown-menu">
+          <a href="beats.html" class="dropdown-item">Beats</a>
+          <a href="movies.html" class="dropdown-item">Movies</a>
+          <a href="tvshows.html" class="dropdown-item">Shows</a>
+        </div>
+      </li>
+      <li class="nav-item"><a href="dream-map.html" class="nav-link">Dreams</a></li>
+      <li class="nav-item"><a href="index.html#contact" class="nav-link">Contact</a></li>
+    </ul>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- Page Header -->
+<section class="code-hero">
+  <div class="container">
+    <div class="code-hero-inner">
+      <span class="code-eyebrow">Things I've built</span>
+      <h1>Code &amp; Projects</h1>
+      <p>A collection of things I've coded — from small utilities to full applications. Mostly web, mostly self-taught, always a learning experience.</p>
+      <div class="code-stats">
+        <div class="code-stat"><span class="code-stat-num" id="stat-total">—</span><span class="code-stat-label">Projects</span></div>
+        <div class="code-stat"><span class="code-stat-num" id="stat-live">—</span><span class="code-stat-label">Live</span></div>
+        <div class="code-stat"><span class="code-stat-num" id="stat-wip">—</span><span class="code-stat-label">In Progress</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="filter-bar" id="filter-bar">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="js">JavaScript</button>
+      <button class="filter-btn" data-filter="py">Python</button>
+      <button class="filter-btn" data-filter="react">React</button>
+      <button class="filter-btn" data-filter="html">HTML / CSS</button>
+    </div>
+    <div class="projects-grid" id="projects-grid">
+      <div class="loading" id="projects-loading"><div class="loading-spinner"></div></div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-content">
+    <span class="footer-logo">LINESBYLIN</span>
+    <div class="footer-links">
+      <a href="blog.html">Blog</a>
+      <a href="poems.html">Poems</a>
+      <a href="stories.html">Stories</a>
+      <a href="mediahub.html">MediaHub</a>
+    </div>
+  </div>
+</footer>
+
+<div class="progress-wrap" id="progressWrap"><span class="progress-icon-text">&#8593;</span></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+<script src="js/firebase.js"></script>
+<script src="js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  var allProjects = [];
+  try { allProjects = (await getMediaHubByCategory('code')) || []; } catch(e) { console.error(e); }
+  renderProjects(allProjects);
+  updateStats(allProjects);
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      var f = btn.dataset.filter;
+      renderProjects(f === 'all' ? allProjects : allProjects.filter(p => (p.tags||'').toLowerCase().includes(f)));
+    });
+  });
+});
+function updateStats(projects) {
+  document.getElementById('stat-total').textContent = projects.length || '0';
+  document.getElementById('stat-live').textContent  = projects.filter(p=>p.status==='live').length||'0';
+  document.getElementById('stat-wip').textContent   = projects.filter(p=>p.status==='wip').length||'0';
+}
+function renderProjects(projects) {
+  var grid = document.getElementById('projects-grid');
+  grid.innerHTML = '';
+  if (!projects||!projects.length) { grid.innerHTML='<p class="projects-empty">No projects yet.</p>'; return; }
+  projects.forEach(p => {
+    var banner=p.banner||'banner-green', status=p.status||'live';
+    var statusLabel={'live':'Live','wip':'In Progress','archived':'Archived'}[status]||status;
+    var statusCls={'live':'status-live','wip':'status-wip','archived':'status-archived'}[status]||'status-live';
+    var tags=(p.tags||'').split(',').map(t=>t.trim()).filter(Boolean);
+    var tagsHTML=tags.map(t=>'<span class="project-tag '+tagClass(t)+'">'+t+'</span>').join('');
+    var bannerContent=p.imageURL?'<img src="'+p.imageURL+'" alt="'+p.title+'" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;">':'<span class="project-banner-icon">&#10022;</span>';
+    var githubBtn=p.githubURL?'<a href="'+p.githubURL+'" class="project-link" target="_blank" rel="noopener">GitHub</a>':'';
+    var liveBtn=p.liveURL?'<a href="'+p.liveURL+'" class="project-link project-link-live" target="_blank" rel="noopener">Live Site</a>':'';
+    var linksHTML=(githubBtn||liveBtn)?'<div class="project-links">'+githubBtn+liveBtn+'</div>':'';
+    var card=document.createElement('div'); card.className='project-card'; card.dataset.tags=tags.map(t=>t.toLowerCase().replace(/[^a-z0-9]/g,'')).join(' ');
+    card.innerHTML='<div class="project-banner '+banner+'" style="position:relative;">'+bannerContent+'<span class="project-status '+statusCls+'">'+statusLabel+'</span></div><div class="project-body"><div class="project-title">'+(p.title||'Untitled')+'</div>'+(p.description?'<p class="project-desc">'+p.description+'</p>':'')+(tags.length?'<div class="project-tags">'+tagsHTML+'</div>':'')+linksHTML+'</div>';
+    grid.appendChild(card);
+  });
+}
+function tagClass(tag) {
+  var t=tag.toLowerCase();
+  if(t.includes('javascript')||t==='js') return 'tag-js';
+  if(t.includes('typescript')||t==='ts') return 'tag-ts';
+  if(t.includes('python'))    return 'tag-py';
+  if(t.includes('html'))      return 'tag-html';
+  if(t.includes('react'))     return 'tag-react';
+  if(t.includes('firebase'))  return 'tag-firebase';
+  if(t.includes('css'))       return 'tag-css';
+  return '';
+}
+</script>
+</body>
+</html>

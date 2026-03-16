@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Biography — LINESBYLIN</title>
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cinzel+Decorative:wght@400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/page-enhancements.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/tsushima-theme.css">
+  <style>
+    /* Bio hero */
+    .bio-hero { background:var(--panel-black,#0F0F10) !important; background-image:none !important; position:relative; overflow:hidden; padding:80px 0; border-bottom:1px solid rgba(201,166,91,.15); }
+    .bio-hero::before { content:''; position:absolute; top:0;left:0;right:0; height:1px; background:linear-gradient(90deg,var(--ghost-crimson,#D64545),var(--samurai-gold,#C9A65B),transparent); opacity:.5; } .bio-hero { background-image:none !important; }
+    .bio-hero-inner { max-width:var(--container-width,1200px); margin:0 auto; padding:0 24px; display:flex; justify-content:center; }
+    .bio-hero-text { text-align:center; max-width:640px; }
+    .bio-hero-eyebrow { display:inline-block; font-family:'Cinzel',serif; font-size:.6rem; font-weight:500; letter-spacing:.26em; text-transform:uppercase; color:var(--ghost-crimson,#D64545); margin-bottom:20px; }
+    .bio-hero-title { font-family:'Cinzel Decorative',serif; font-size:clamp(2rem,5vw,3.8rem); color:var(--text-cream,#F5F3EE); line-height:1.15; margin-bottom:20px; font-weight:400; }
+    .bio-hero-subtitle { font-family:'EB Garamond',serif; font-style:italic; font-size:1.1rem; color:var(--text-secondary,#B8B5AD); line-height:1.8; margin-bottom:32px; }
+    .bio-chapter-pills { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+    .bio-chapter-pill { font-family:'Cinzel',serif; font-size:.58rem; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--text-cream,#F5F3EE); padding:8px 20px; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.05); text-decoration:none; transition:all .2s; }
+    .bio-chapter-pill:hover { background:rgba(201,166,91,.12); border-color:rgba(201,166,91,.35); color:var(--samurai-gold,#C9A65B); }
+
+    /* Chapters */
+    .bio-content { padding:80px 0; }
+    .bio-content .container { max-width:920px; }
+    .chapter { display:grid; grid-template-columns:160px 1fr; gap:0 48px; margin-bottom:80px; padding-bottom:80px; border-bottom:1px solid rgba(0,0,0,.1); }
+    .chapter:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
+    .chapter-label { position:sticky; top:calc(64px + 24px); height:fit-content; text-align:right; padding-right:24px; border-right:2px solid var(--ghost-crimson,#D64545); }
+    .chapter-number { display:block; font-family:'Cinzel',serif; font-size:3.5rem; line-height:1; color:rgba(0,0,0,.1); margin-bottom:8px; font-weight:400; letter-spacing:.02em; }
+    .chapter-name { font-family:'Cinzel',serif; font-size:.9rem; color:var(--ghost-crimson,#D64545); line-height:1.4; margin:0 0 6px; font-weight:400; letter-spacing:.06em; }
+    .chapter-era { display:inline-block; font-family:'EB Garamond',serif; font-style:italic; font-size:.85rem; color:#8E8C85; }
+
+    .chapter-img-placeholder { width:100%; height:260px; background:var(--fog-white,#E7E5DF); border:1px solid rgba(0,0,0,.08); margin-bottom:8px; display:flex; align-items:center; justify-content:center; color:#8E8C85; font-family:'EB Garamond',serif; font-style:italic; font-size:.9rem; }
+    .chapter-img-caption { font-family:'EB Garamond',serif; font-style:italic; font-size:.88rem; color:#8E8C85; text-align:center; margin-bottom:24px; }
+    .chapter-body img { width:100%; height:260px; object-fit:cover; display:block; border:1px solid rgba(0,0,0,.08); margin-bottom:8px; cursor:zoom-in; }
+
+    .chapter-text p { font-family:'EB Garamond',serif; font-size:1.1rem; line-height:1.9; color:var(--ink,#111113); margin-bottom:20px; text-align:justify; }
+    .chapter-text p:last-child { margin-bottom:0; }
+
+    .pull-quote { margin:24px 0; padding:20px 28px; background:var(--fog-white,#E7E5DF); border-left:3px solid var(--ghost-crimson,#D64545); }
+    .pull-quote p { font-family:'EB Garamond',serif; font-style:italic; font-size:1.15rem; color:var(--panel-black,#0F0F10); line-height:1.7; margin:0; }
+
+    @media(max-width:768px){
+      .chapter { grid-template-columns:1fr; gap:24px; }
+      .chapter-label { position:static; text-align:left; padding-right:0; padding-left:16px; border-right:none; border-left:3px solid var(--ghost-crimson,#D64545); display:flex; align-items:center; gap:16px; }
+      .chapter-number { font-size:2.5rem; margin-bottom:0; }
+      .chapter-body img { height:200px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">LINESBYLIN</a>
+    <ul class="nav-menu" id="nav-menu">
+      <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+      <li class="nav-item"><a href="index.html#about" class="nav-link">About</a></li>
+      <li class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle">Work</a>
+        <div class="dropdown-menu">
+          <a href="blog.html" class="dropdown-item">Blog</a>
+          <a href="poems.html" class="dropdown-item">Poems</a>
+          <a href="stories.html" class="dropdown-item">Stories</a>
+          <a href="biography.html" class="dropdown-item">Biography</a>
+          <a href="code.html" class="dropdown-item">Code</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle">MediaHub</a>
+        <div class="dropdown-menu">
+          <a href="beats.html" class="dropdown-item">Beats</a>
+          <a href="movies.html" class="dropdown-item">Movies</a>
+          <a href="tvshows.html" class="dropdown-item">Shows</a>
+        </div>
+      </li>
+      <li class="nav-item"><a href="dream-map.html" class="nav-link">Dreams</a></li>
+      <li class="nav-item"><a href="index.html#contact" class="nav-link">Contact</a></li>
+    </ul>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="bio-hero" style="background:#0F0F10 !important;background-image:none !important;">
+  <div class="bio-hero-inner">
+    <div class="bio-hero-text">
+      <span class="bio-hero-eyebrow">The Story Behind the Words</span>
+      <div style="display:flex;justify-content:center;margin-bottom:16px;"></div><h1 class="bio-hero-title">My Journey</h1>
+      <p class="bio-hero-subtitle">From the quiet fields of the province to the complex logic of code — a life told in chapters.</p>
+      <div class="bio-chapter-pills">
+        <a href="#childhood" class="bio-chapter-pill">Childhood Roots</a>
+        <a href="#teenage" class="bio-chapter-pill">The Teenage Years</a>
+        <a href="#college" class="bio-chapter-pill">College &amp; Code</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Content -->
+<section class="bio-content">
+  <div class="container">
+
+    <div class="chapter" id="childhood">
+      <div class="chapter-label">
+        <span class="chapter-number">01</span>
+        <h2 class="chapter-name">Childhood Roots</h2>
+        <span class="chapter-era">Early Years</span>
+      </div>
+      <div class="chapter-body">
+        <img src="assets/images/art2.png" alt="Childhood" onclick="openLightbox('assets/images/art2.png','The quiet, open fields of Mahayag, Zamboanga del Sur.')">
+        <p class="chapter-img-caption">The quiet, open fields of Mahayag, Zamboanga del Sur.</p>
+        <div class="chapter-text">
+          <p>My story began in <strong>Mahayag, Zamboanga del Sur</strong>, a place where time seemed to move a little slower. With my parents away working to provide for us, I was raised by my <em>Lolo</em> and <em>Lola</em> in their humble home on the farm. It was a life of simplicity — surrounded by open fields, the smell of earth, and the sounds of nature — but it was also a life of isolation. Our neighbors were distant, and often, my only companions were the cats and dogs roaming our yard.</p>
+          <p>Because I lacked playmates, I learned to find joy in the mundane. I would spend hours sitting on the porch, mesmerized by the chickens pecking at their feed. My fondest memories were the quiet afternoons spent fishing with my grandfather. Whether we caught something or came home empty-handed didn't matter; it was the silence we shared that I cherished.</p>
+          <div class="pull-quote">
+            <p>I stole my cousin's slippers and threw them away, thinking that if they couldn't walk, they couldn't leave.</p>
+          </div>
+          <p>The house only truly felt alive when my cousins visited. There was magic there too — a season when the house would fill with butterflies of every color. Walking home alongside my grandfather to the smell of my grandmother's cooking is a memory I still hold close.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter" id="teenage">
+      <div class="chapter-label">
+        <span class="chapter-number">02</span>
+        <h2 class="chapter-name">The Teenage Years</h2>
+        <span class="chapter-era">High School</span>
+      </div>
+      <div class="chapter-body">
+        <img src="assets/images/art3.png" style="object-position:bottom center;" alt="Teenage" onclick="openLightbox('assets/images/art3.png','Moments of laughter and chaos with high school friends.')">
+        <p class="chapter-img-caption">Moments of laughter and chaos with high school friends.</p>
+        <div class="chapter-text">
+          <p>Transitioning into high school was a shock to the system. I went from the quiet isolation of the farm to a world of noise, chaos, and social awkwardness. In Grade 8, in a desperate attempt to get exempted from some subject requirements, I made the terrifying decision to join the school pageant. I remember standing on that stage, knees shaking uncontrollably, blinded by the lights, instantly regretting my choice. Yet, looking back, that moment of vulnerability was my first step out of my shell.</p>
+          <p>I eventually found my tribe — a group of friends who were loud, chaotic, and always ready for adventure. Our sanctuary was the local <strong>Lemon Square</strong>, where we'd hoard snacks and scream over intense matches of mobile games.</p>
+          <div class="pull-quote">
+            <p>I would study late into the night just for the brief moment of validation when I could raise my hand and answer correctly.</p>
+          </div>
+          <p>But just as we were hitting our stride, the world stopped. The <em>COVID-19</em> pandemic hit, and our high school life was cut short without a proper goodbye. The prom, the graduation rites, the final days of just being kids — all canceled. It taught me to value the memories we did manage to make before the world went quiet.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="chapter" id="college">
+      <div class="chapter-label">
+        <span class="chapter-number">03</span>
+        <h2 class="chapter-name">College &amp; Code</h2>
+        <span class="chapter-era">University</span>
+      </div>
+      <div class="chapter-body">
+        <div class="chapter-img-placeholder">No image yet</div>
+        <p class="chapter-img-caption">The new reality: sleepless nights and syntax errors.</p>
+        <div class="chapter-text">
+          <p>College was supposed to be the start of my dream to become a nurse. I had a vision of myself in white, taking care of people, healing them. I applied to <strong>PLM</strong> and <strong>UE</strong>, holding onto that hope. But life had a different plot twist waiting for me. PLM ran out of slots, and with my options limited, I found myself enrolling at <strong>UE</strong> for a course I barely understood: <strong>Computer Science</strong>.</p>
+          <p>I walked into this field thinking it would be about computers; I didn't realize it would be about logic, patience, and failure. The learning curve was brutal. I remember the rush of my first "Hello World," followed immediately by nights where I stared at a monitor for six hours hunting for a single missing semicolon.</p>
+          <div class="pull-quote">
+            <p>It is a love-hate relationship; the frustration is overwhelming, but the dopamine rush when a code finally runs is addictive.</p>
+          </div>
+          <p>Along the way, I discovered that Computer Science isn't just about math and logic — it's a canvas. My interest in <strong>Game Development</strong> and <strong>Web Design</strong> allowed me to bridge my technical skills with my creative side. I may not be a nurse, but I am learning to build things that help people in a different way — one syntax error at a time.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-content">
+    <span class="footer-logo">LINESBYLIN</span>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="mediahub.html">MediaHub</a>
+    </div>
+  </div>
+</footer>
+
+<div class="progress-wrap" id="progressWrap"><span class="progress-icon-text">&#8593;</span></div>
+
+<!-- Lightbox -->
+<div id="bio-lb" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.92);align-items:center;justify-content:center;flex-direction:column;gap:16px;">
+  <button onclick="closeLightbox()" style="position:absolute;top:20px;right:24px;width:40px;height:40px;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">&#x2715;</button>
+  <img id="bio-lb-img" src="" style="max-width:90vw;max-height:80vh;object-fit:contain;box-shadow:0 20px 60px rgba(0,0,0,0.6);">
+  <p id="bio-lb-caption" style="color:rgba(255,255,255,0.6);font-family:'EB Garamond',serif;font-style:italic;font-size:.9rem;text-align:center;max-width:480px;margin:0;"></p>
+</div>
+
+<script>
+function openLightbox(src, caption) {
+  var lb = document.getElementById('bio-lb');
+  document.getElementById('bio-lb-img').src = src;
+  document.getElementById('bio-lb-caption').textContent = caption||'';
+  lb.style.display = 'flex'; document.body.style.overflow='hidden';
+}
+function closeLightbox() {
+  document.getElementById('bio-lb').style.display='none'; document.body.style.overflow='';
+}
+document.getElementById('bio-lb').addEventListener('click',function(e){ if(e.target===this) closeLightbox(); });
+document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeLightbox(); });
+</script>
+<script src="js/main.js"></script>
+</body>
+</html>

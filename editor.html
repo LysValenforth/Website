@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cinzel+Decorative:wght@400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/editor.css">
+</head>
+<body>
+
+  <!-- ── LOGIN OVERLAY ──────────────────────────────────────────────────── -->
+  <div id="login-overlay" style="position:fixed;inset:0;z-index:9999;background:#0F0F10;display:flex;align-items:center;justify-content:center;">
+    <div style="width:100%;max-width:360px;padding:40px 32px;background:#F1EFE9;border:1px solid rgba(201,166,91,0.3);box-shadow:8px 8px 0 rgba(0,0,0,0.4);text-align:center;margin:16px;">
+      <p style="font-family:'Cinzel Decorative',serif;font-size:1.2rem;color:#0F0F10;margin:0 0 4px;letter-spacing:0.1em;">LINESBYLIN</p>
+      <p style="font-family:'Cinzel',serif;font-size:0.58rem;color:#8E8C85;margin:0 0 28px;letter-spacing:0.24em;text-transform:uppercase;">Editor Access</p>
+
+      <div id="login-error" style="display:none;background:rgba(214,69,69,0.06);color:#D64545;border:1px solid #D64545;padding:10px 14px;font-family:'EB Garamond',serif;font-size:0.95rem;margin-bottom:16px;text-align:left;"></div>
+
+      <input id="login-email" type="email" placeholder="email" autocomplete="email"
+        style="width:100%;box-sizing:border-box;padding:10px 14px;border:1px solid rgba(0,0,0,0.15);border-radius:0;font-family:'EB Garamond',serif;font-size:1rem;color:#0F0F10;background:#fff;margin-bottom:10px;outline:none;transition:border-color .15s;"
+        onfocus="this.style.borderColor='#D64545'" onblur="this.style.borderColor='rgba(0,0,0,0.15)'">
+
+      <input id="login-password" type="password" placeholder="password" autocomplete="current-password"
+        style="width:100%;box-sizing:border-box;padding:10px 14px;border:1px solid rgba(0,0,0,0.15);border-radius:0;font-family:'EB Garamond',serif;font-size:1rem;color:#0F0F10;background:#fff;margin-bottom:24px;outline:none;transition:border-color .15s;"
+        onfocus="this.style.borderColor='#D64545'" onblur="this.style.borderColor='rgba(0,0,0,0.15)'">
+
+      <button id="login-btn" style="width:100%;padding:11px;background:#0F0F10;color:#F5F3EE;border:1px solid #0F0F10;border-radius:0;font-family:'Cinzel',serif;font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;transition:background .18s;">Sign In</button>
+    </div>
+  </div>
+
+  <!-- TOP NAV -->
+  <nav class="nav editor-nav">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">LINESBYLIN <span style="font-family:'Cinzel',serif;font-size:0.55rem;letter-spacing:0.2em;color:rgba(201,166,91,0.5);margin-left:8px;vertical-align:middle;">EDITOR</span></a>
+
+      <!-- Save status indicator -->
+      <div class="editor-save-status">
+        <div class="status-indicator" id="status-dot"></div>
+        <span id="save-status-text"></span>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:var(--space-xs);">
+        <button id="btn-preview-post" class="btn btn-secondary btn-small" style="display:none;" title="Preview post (Ctrl+P)">
+          Preview
+        </button>
+        <button id="btn-save-post" class="btn btn-primary btn-small" title="Save (Ctrl+S)">
+          Save
+        </button>
+        <a href="index.html" class="btn btn-secondary btn-small">Site</a>
+        <button id="btn-sign-out" class="btn btn-secondary btn-small" title="Sign out">Sign Out</button>
+        <button class="mobile-toolbar-btn" id="btn-toggle-sidebar" style="display:none;"><svg style="width:18px;height:18px;flex-shrink:0;vertical-align:middle;display:inline-block;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/><circle cx="8" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="10" cy="18" r="2" fill="currentColor" stroke="none"/></svg></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 3-PANEL EDITOR -->
+  <div class="editor-container">
+
+    <!-- ── LEFT PANEL: Content Manager ────────────── -->
+    <aside class="editor-sidebar" id="editor-sidebar">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">
+          <svg style="width:15px;height:15px;flex-shrink:0;vertical-align:middle;display:inline-block;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M4 6h16v13H4z"/><path d="M4 6l2-3h6l2 3"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="13" y2="15"/></svg> My Posts
+        </h2>
+      </div>
+
+      <!-- Tab switcher: Posts / MediaHub / Code / Gallery -->
+      <div class="sidebar-tabs">
+        <button class="sidebar-tab active" data-tab="posts">Posts</button>
+        <button class="sidebar-tab" data-tab="mediahub">MediaHub</button>
+        <button class="sidebar-tab" data-tab="code">Code</button>
+        <button class="sidebar-tab" data-tab="gallery">Gallery</button>
+      </div>
+
+      <div class="sidebar-search-wrap">
+        <input type="text" id="sidebar-search" class="sidebar-search" placeholder="Search...">
+      </div>
+
+      <!-- Category filter pills — shown contextually per tab -->
+      <div class="sidebar-cat-filter" id="sidebar-cat-filter-posts" style="display:none">
+        <button class="sidebar-cat-pill active" data-cat="all">All</button>
+        <button class="sidebar-cat-pill" data-cat="blog">Blog</button>
+        <button class="sidebar-cat-pill" data-cat="poem">Poem</button>
+        <button class="sidebar-cat-pill" data-cat="story">Story</button>
+      </div>
+
+      <div class="sidebar-cat-filter" id="sidebar-cat-filter-mediahub" style="display:none">
+        <button class="sidebar-cat-pill active" data-cat="all">All</button>
+        <button class="sidebar-cat-pill" data-cat="beats">Beats</button>
+        <button class="sidebar-cat-pill" data-cat="movies">Movies</button>
+        <button class="sidebar-cat-pill" data-cat="tvshows">Shows</button>
+      </div>
+
+      <div class="sidebar-actions">
+        <button id="btn-new-post" class="btn btn-primary btn-small" style="flex:1;" title="New (Ctrl+N)">
+          New
+        </button>
+      </div>
+
+      <div class="posts-list-container" id="posts-list">
+        <div class="loading">
+          <div class="loading-spinner"></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ── CENTER PANEL: Visual Editor ────────────── -->
+    <main class="editor-main">
+
+      <!-- ── Docs-style Formatting Toolbar ───────────────── -->
+      <div class="editor-toolbar-top">
+        <div class="formatting-bar">
+
+          <!-- Font Family -->
+          <select id="toolbar-font-family" class="toolbar-select toolbar-font-sel" title="Font family">
+            <option value="Nunito">Nunito</option>
+            <option value="Patrick Hand">Patrick Hand</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Arial">Arial</option>
+            <option value="Courier New">Courier New</option>
+          </select>
+
+          <div class="toolbar-sep"></div>
+
+          <!-- Font Size -->
+          <div class="toolbar-size-group">
+            <button id="toolbar-size-dec" class="format-btn" title="Decrease size">−</button>
+            <input  id="toolbar-font-size" class="toolbar-size-input" type="number" value="16" min="8" max="72" title="Font size">
+            <button id="toolbar-size-inc" class="format-btn" title="Increase size">+</button>
+          </div>
+
+          <div class="toolbar-sep"></div>
+
+          <!-- Text Style -->
+          <button class="format-btn" data-cmd="bold"          title="Bold"><b>B</b></button>
+          <button class="format-btn" data-cmd="italic"        title="Italic"><i>I</i></button>
+          <button class="format-btn" data-cmd="underline"     title="Underline"><u>U</u></button>
+          <button class="format-btn" data-cmd="strikeThrough" title="Strikethrough"><s>S</s></button>
+
+          <!-- Text Color -->
+          <button id="toolbar-color-btn" class="format-btn toolbar-color-btn" title="Text color">
+            <span class="color-letter">A</span>
+            <span class="color-swatch" id="color-swatch" style="background:#2F5D50;"></span>
+          </button>
+          <input type="color" id="toolbar-text-color" value="#2F5D50" style="display:none;">
+
+          <!-- Highlight -->
+          <button id="toolbar-highlight-btn" class="format-btn toolbar-color-btn" title="Highlight">
+            <span class="color-letter" style="background:rgba(255,220,100,0.5);padding:0 2px;">H</span>
+            <span class="color-swatch" id="hl-swatch" style="background:#FFDC64;"></span>
+          </button>
+          <input type="color" id="toolbar-highlight-color" value="#FFDC64" style="display:none;">
+
+          <div class="toolbar-sep"></div>
+
+          <!-- Block Format -->
+          <select id="toolbar-block-format" class="toolbar-select toolbar-block-sel" title="Paragraph style">
+            <option value="p">Normal</option>
+            <option value="h1">Heading 1</option>
+            <option value="h2">Heading 2</option>
+            <option value="h3">Heading 3</option>
+            <option value="blockquote">Quote</option>
+            <option value="pre">Code</option>
+          </select>
+
+          <div class="toolbar-sep"></div>
+
+          <!-- Alignment — clean letter labels -->
+          <button class="format-btn tb-align" data-cmd="justifyLeft"    title="Align left">L</button>
+          <button class="format-btn tb-align" data-cmd="justifyCenter"  title="Align center">C</button>
+          <button class="format-btn tb-align" data-cmd="justifyRight"   title="Align right">R</button>
+          <button class="format-btn tb-align" data-cmd="justifyFull"    title="Justify">J</button>
+
+          <div class="toolbar-sep"></div>
+
+          <!-- Lists & Indent — clean text -->
+          <button class="format-btn tb-list" data-cmd="insertUnorderedList" title="Bullet list">•≡</button>
+          <button class="format-btn tb-list" data-cmd="insertOrderedList"   title="Numbered list">1≡</button>
+          <button id="toolbar-indent-less" class="format-btn tb-indent" title="Decrease indent">⇤</button>
+          <button id="toolbar-indent-more" class="format-btn tb-indent" title="Increase indent">⇥</button>
+
+          <div class="toolbar-sep"></div>
+
+          <!-- Link & Clear -->
+          <button class="format-btn" id="btn-insert-link" title="Insert link">Ln</button>
+          <button class="format-btn tb-clear" data-cmd="removeFormat" title="Clear formatting">×</button>
+
+        </div>
+
+        <!-- Right side: word count -->
+        <div id="word-count-display" class="word-count-display"></div>
+      </div>
+
+      <!-- Mode message (shown when mediahub or gallery is active) -->
+      <div id="editor-mode-msg" class="editor-mode-msg" style="display:none;">
+        <div class="mode-msg-icon"></div>
+        <div class="mode-msg-title"></div>
+        <div class="mode-msg-sub"></div>
+      </div>
+
+      <!-- Canvas area -->
+      <div class="editor-canvas">
+        <div class="editor-preview" id="editor-preview">
+          <div class="no-post-selected" id="no-post-msg">
+            <div class="no-post-icon">
+              <svg style="width:48px;height:48px;flex-shrink:0;vertical-align:middle;display:inline-block;opacity:0.3;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M17 3l4 4-12 12H5v-4L17 3z"/><line x1="15" y1="5" x2="19" y2="9"/></svg>
+            </div>
+            <h3>Select a post to start editing</h3>
+            <p>Choose from the left panel or create a new post.</p>
+          </div>
+          <div id="editor-canvas-inner" style="display:none;">
+            <div class="editor-sections" id="editor-sections"></div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- ── RIGHT PANEL: Controls ───────────────────── -->
+    <aside class="editor-controls" id="editor-controls">
+      <div class="controls-header">
+        <h2 class="controls-title">
+          <svg style="width:15px;height:15px;flex-shrink:0;vertical-align:middle;display:inline-block;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/><circle cx="8" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="10" cy="18" r="2" fill="currentColor" stroke="none"/></svg> Post Settings
+        </h2>
+      </div>
+
+      <div class="controls-content">
+
+        <!-- Post Settings -->
+        <div class="control-section">
+          <div class="control-section-title">Post Details</div>
+          <label class="field-label">Title</label>
+          <input type="text" id="post-title-input" class="field-input" placeholder="Post title...">
+          <label class="field-label">Category</label>
+          <select id="post-category" class="field-select">
+            <optgroup label="Writing">
+              <option value="blog">Blog</option>
+              <option value="poem">Poem</option>
+              <option value="story">Story</option>
+            </optgroup>
+            <optgroup label="MediaHub">
+              <option value="beats">My Beats</option>
+              <option value="movies">Film Movies</option>
+              <option value="tvshows">TV Shows</option>
+            </optgroup>
+            <optgroup label="Code">
+              <option value="code">Code Project</option>
+            </optgroup>
+          </select>
+          <label class="field-label">Date</label>
+          <input type="date" id="post-date" class="field-input">
+
+          <label class="field-label">Slug <span style="font-size:10px;font-weight:400;opacity:.6;">(URL-friendly ID)</span></label>
+          <input type="text" id="post-slug-input" class="field-input" placeholder="my-post-title">
+
+          <label class="field-label">Excerpt <span style="font-size:10px;font-weight:400;opacity:.6;">(shown on cards)</span></label>
+          <textarea id="post-excerpt-input" class="field-input" rows="2" style="resize:vertical;" placeholder="A short summary..."></textarea>
+
+          <label class="field-label">Cover Image URL</label>
+          <input type="text" id="post-cover-input" class="field-input" placeholder="https://... or assets/image.jpg">
+          <div id="post-cover-preview-wrap" style="display:none; margin-top:6px; margin-bottom:4px;">
+            <img id="post-cover-preview-img" src="" alt="Cover preview" style="width:100%;border-radius:var(--radius-md);border:var(--border-width) solid var(--warm-beige);object-fit:cover;max-height:120px;">
+          </div>
+
+          <!-- Published toggle -->
+          <div class="field-published-row">
+            <label class="field-label" style="margin:0;">Published</label>
+            <label class="toggle-switch">
+              <input type="checkbox" id="post-published-toggle" checked>
+              <span class="toggle-track">
+                <span class="toggle-thumb"></span>
+              </span>
+            </label>
+          </div>
+          <p class="field-hint">Unpublished posts won't appear on the public site.</p>
+
+          <!-- Featured pin -->
+          <div class="field-published-row" style="margin-top:6px;">
+            <label class="field-label" style="margin:0;">Featured</label>
+            <label class="toggle-switch">
+              <input type="checkbox" id="post-featured-toggle">
+              <span class="toggle-track">
+                <span class="toggle-thumb"></span>
+              </span>
+            </label>
+          </div>
+          <p class="field-hint">Featured posts are pinned to the top of their category page.</p>
+
+          <!-- Delete (safe location, in settings) -->
+          <div style="margin-top:var(--space-sm); padding-top:var(--space-sm); border-top:1px solid var(--warm-beige);">
+            <button id="btn-delete-post" class="btn btn-danger btn-small" style="width:100%;">
+              <svg style="width:15px;height:15px;flex-shrink:0;vertical-align:middle;display:inline-block;opacity:0.85;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 6V4h4v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg> Delete this post
+            </button>
+          </div>
+        </div>
+
+        <!-- MediaHub: My Beats fields -->
+        <div class="control-section" id="mediahub-beats-fields" style="display:none;">
+          <div class="control-section-title">
+            <svg style="width:15px;height:15px;flex-shrink:0;vertical-align:middle;display:inline-block;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg> Beat Details
+          </div>
+          <label class="field-label">Artist Name <span style="color:var(--alert-red);">*</span></label>
+          <input type="text" id="beats-creator" class="field-input" placeholder="Artist or producer name...">
+          <label class="field-label">Genre</label>
+          <input type="text" id="beats-genre" class="field-input" placeholder="e.g. Hip-Hop, Lo-Fi...">
+          <label class="field-label">Album / Cover Image</label>
+          <div id="beats-drop-area" style="border:2px dashed rgba(201,166,91,0.2);border-radius:0;padding:12px;text-align:center;cursor:pointer;transition:all .2s ease;margin-bottom:6px;" onclick="document.getElementById('beats-file-input').click()" ondragover="event.preventDefault();this.style.borderColor='#C9A65B'" ondragleave="this.style.borderColor='rgba(201,166,91,0.2)'" ondrop="handleMediaDrop(event,'beats')">
+            <div style="color:var(--text-secondary);font-size:var(--text-sm);">drag & drop or <span style="color:#C9A65B;font-weight:600;">browse</span></div>
+            <div style="font-size:var(--text-xs);color:var(--text-secondary);margin-top:2px;">JPG, PNG, WEBP</div>
+          </div>
+          <input type="file" id="beats-file-input" accept="image/*" style="display:none" onchange="handleMediaFile(this.files[0],'beats')">
+          <input type="text" id="beats-image-url" class="field-input" placeholder="or paste image URL https://...">
+          <label class="field-label">Song Description</label>
+          <textarea id="beats-description" class="field-input" rows="3" style="resize:vertical;" placeholder="About the track..."></textarea>
+          <label class="field-label">Song Link</label>
+          <input type="url" id="beats-song-link" class="field-input" placeholder="https://soundcloud.com/...">
+          <p style="font-size:var(--text-xs);color:var(--text-secondary);margin:0 0 var(--space-xs) 0;">Song title will link here on the public page.</p>
+          <label class="field-label">Artist Link</label>
+          <input type="url" id="beats-artist-link" class="field-input" placeholder="https://instagram.com/...">
+          <p style="font-size:var(--text-xs);color:var(--text-secondary);margin:0;">Artist name will link here on the public page.</p>
+
+          <label class="field-label" style="margin-top:var(--space-sm);">Audio File</label>
+          <div id="beats-audio-drop" class="audio-drop-zone">
+            <svg style="width:24px;height:24px;flex-shrink:0;vertical-align:middle;display:inline-block;opacity:0.4;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            <span id="beats-audio-drop-label">Drag a Discord audio link here</span>
+          </div>
+          <input type="hidden" id="beats-audio-url">
+          <div id="beats-audio-preview" style="display:none; margin-top:var(--space-xs);">
+            <audio id="beats-audio-player" controls style="width:100%; border-radius:var(--radius-md);"></audio>
+            <button type="button" id="beats-audio-clear" class="btn btn-danger btn-small" style="margin-top:4px; width:100%;">Remove Audio</button>
+          </div>
+        </div>
+
+        <!-- MediaHub: Film Movies fields -->
+        <div class="control-section" id="mediahub-movies-fields" style="display:none;">
+          <div class="control-section-title">
+            <svg style="width:15px;height:15px;flex-shrink:0;vertical-align:middle;display:inline-block;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><rect x="2" y="7" width="20" height="14"/><polyline points="2 11 22 11"/><line x1="7" y1="2" x2="7" y2="7"/><line x1="12" y1="2" x2="12" y2="7"/><line x1="17" y1="2" x2="17" y2="7"/><line x1="7" y1="11" x2="7" y2="21"/></svg> Movie Details
+          </div>
+          <label class="field-label">Genre</label>
+          <input type="text" id="movies-genre" class="field-input" placeholder="e.g. Drama, Sci-Fi...">
+          <label class="field-label">Poster Image</label>
+          <div id="movies-drop-area" style="border:2px dashed rgba(201,166,91,0.2);border-radius:0;padding:12px;text-align:center;cursor:pointer;transition:all .2s ease;margin-bottom:6px;" onclick="document.getElementById('movies-file-input').click()" ondragover="event.preventDefault();this.style.borderColor='#C9A65B'" ondragleave="this.style.borderColor='rgba(201,166,91,0.2)'" ondrop="handleMediaDrop(event,'movies')">
+            <div style="color:var(--text-secondary);font-size:var(--text-sm);">drag & drop or <span style="color:#C9A65B;font-weight:600;">browse</span></div>
+            <div style="font-size:var(--text-xs);color:var(--text-secondary);margin-top:2px;">JPG, PNG, WEBP</div>
+          </div>
+          <input type="file" id="movies-file-input" accept="image/*" style="display:none" onchange="handleMediaFile(this.files[0],'movies')">
+          <input type="text" id="movies-image-url" class="field-input" placeholder="or paste image URL https://...">
+          <label class="field-label">Synopsis</label>
+          <textarea id="movies-description" class="field-input" rows="3" style="resize:vertical;" placeholder="Movie synopsis..."></textarea>
+          <label class="field-label">Director</label>
+          <input type="text" id="movies-creator" class="field-input" placeholder="Director name...">
+          <label class="field-label">Stars</label>
+          <input type="text" id="movies-stars" class="field-input" placeholder="Cast, comma-separated...">
+          <label class="field-label">My Rating <span style="font-size:10px;font-weight:400;opacity:.6;">1–10 stars</span></label>
+          <div class="star-rating-input" id="movies-star-rating" data-field="movies-rating">
+            <input type="hidden" id="movies-rating" value="">
+            <div class="star-rating-row">
+              <span class="sri-star" data-val="1">★</span><span class="sri-star" data-val="2">★</span><span class="sri-star" data-val="3">★</span><span class="sri-star" data-val="4">★</span><span class="sri-star" data-val="5">★</span><span class="sri-star" data-val="6">★</span><span class="sri-star" data-val="7">★</span><span class="sri-star" data-val="8">★</span><span class="sri-star" data-val="9">★</span><span class="sri-star" data-val="10">★</span>
+            </div>
+            <span class="sri-value-label" id="movies-rating-label">Not rated</span>
+            <button type="button" class="rating-clear-btn" onclick="clearStarRating('movies')">Clear</button>
+          </div>
+          <label class="field-label">Why I Like It</label>
+          <textarea id="movies-notes" class="field-input" rows="3" style="resize:vertical;" placeholder="What makes this movie special to you..."></textarea>
+          <label class="field-label">Movie Info Link</label>
+          <input type="url" id="movies-info-link" class="field-input" placeholder="https://imdb.com/title/...">
+          <p style="font-size:var(--text-xs);color:var(--text-secondary);margin:0 0 var(--space-xs) 0;">Movie title will link here on the public page.</p>
+          <label class="field-label">Trailer Embed URL</label>
+          <input type="url" id="movies-video-url" class="field-input" placeholder="https://www.youtube.com/embed/...">
+        </div>
+
+        <!-- MediaHub: TV Shows fields -->
+        <div class="control-section" id="mediahub-tvshows-fields" style="display:none;">
+          <div class="control-section-title">
+            <svg style="width:15px;height:15px;flex-shrink:0;vertical-align:middle;display:inline-block;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><rect x="2" y="5" width="20" height="14"/><polyline points="8 21 12 17 16 21"/><line x1="2" y1="9" x2="22" y2="9"/></svg> Show Details
+          </div>
+          <label class="field-label">Genre</label>
+          <input type="text" id="tvshows-genre" class="field-input" placeholder="e.g. Drama, Comedy...">
+          <label class="field-label">Poster Image</label>
+          <div id="tvshows-drop-area" style="border:2px dashed rgba(201,166,91,0.2);border-radius:0;padding:12px;text-align:center;cursor:pointer;transition:all .2s ease;margin-bottom:6px;" onclick="document.getElementById('tvshows-file-input').click()" ondragover="event.preventDefault();this.style.borderColor='#C9A65B'" ondragleave="this.style.borderColor='rgba(201,166,91,0.2)'" ondrop="handleMediaDrop(event,'tvshows')">
+            <div style="color:var(--text-secondary);font-size:var(--text-sm);">drag & drop or <span style="color:#C9A65B;font-weight:600;">browse</span></div>
+            <div style="font-size:var(--text-xs);color:var(--text-secondary);margin-top:2px;">JPG, PNG, WEBP</div>
+          </div>
+          <input type="file" id="tvshows-file-input" accept="image/*" style="display:none" onchange="handleMediaFile(this.files[0],'tvshows')">
+          <input type="text" id="tvshows-image-url" class="field-input" placeholder="or paste image URL https://...">
+          <label class="field-label">Synopsis</label>
+          <textarea id="tvshows-description" class="field-input" rows="3" style="resize:vertical;" placeholder="Show synopsis..."></textarea>
+          <label class="field-label">Director / Creator</label>
+          <input type="text" id="tvshows-creator" class="field-input" placeholder="Creator or director...">
+          <label class="field-label">Stars</label>
+          <input type="text" id="tvshows-stars" class="field-input" placeholder="Cast, comma-separated...">
+          <label class="field-label">My Rating <span style="font-size:10px;font-weight:400;opacity:.6;">1–10 stars</span></label>
+          <div class="star-rating-input" id="tvshows-star-rating" data-field="tvshows-rating">
+            <input type="hidden" id="tvshows-rating" value="">
+            <div class="star-rating-row">
+              <span class="sri-star" data-val="1">★</span><span class="sri-star" data-val="2">★</span><span class="sri-star" data-val="3">★</span><span class="sri-star" data-val="4">★</span><span class="sri-star" data-val="5">★</span><span class="sri-star" data-val="6">★</span><span class="sri-star" data-val="7">★</span><span class="sri-star" data-val="8">★</span><span class="sri-star" data-val="9">★</span><span class="sri-star" data-val="10">★</span>
+            </div>
+            <span class="sri-value-label" id="tvshows-rating-label">Not rated</span>
+            <button type="button" class="rating-clear-btn" onclick="clearStarRating('tvshows')">Clear</button>
+          </div>
+          <label class="field-label">Why I Like It</label>
+          <textarea id="tvshows-notes" class="field-input" rows="3" style="resize:vertical;" placeholder="What makes this show special to you..."></textarea>
+          <label class="field-label">Show Info Link</label>
+          <input type="url" id="tvshows-info-link" class="field-input" placeholder="https://imdb.com/title/...">
+          <p style="font-size:var(--text-xs);color:var(--text-secondary);margin:0 0 var(--space-xs) 0;">Show title will link here on the public page.</p>
+          <label class="field-label">Clip Embed URL</label>
+          <input type="url" id="tvshows-video-url" class="field-input" placeholder="https://www.youtube.com/embed/...">
+        </div>
+
+
+        <!-- Code Project fields -->
+        <div class="control-section" id="mediahub-code-fields" style="display:none;">
+          <div class="control-section-title">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;flex-shrink:0;vertical-align:middle;"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            Code Project Details
+          </div>
+
+          <label class="field-label">Description</label>
+          <textarea id="code-description" class="field-input" rows="3" style="resize:vertical;" placeholder="What does this project do? What did you learn?"></textarea>
+
+          <label class="field-label">Preview Image URL</label>
+          <input type="url" id="code-image-url" class="field-input" placeholder="https://... screenshot or banner">
+          <div id="code-image-preview-wrap" style="display:none; margin-top:6px;">
+            <img id="code-image-preview-img" src="" alt="Preview" style="width:100%;border-radius:var(--radius-md);border:var(--border-width) solid var(--warm-beige);object-fit:cover;max-height:140px;">
+          </div>
+
+          <label class="field-label" style="margin-top:var(--space-sm);">GitHub URL</label>
+          <input type="url" id="code-github-url" class="field-input" placeholder="https://github.com/you/repo">
+
+          <label class="field-label">Live Site URL</label>
+          <input type="url" id="code-live-url" class="field-input" placeholder="https://yoursite.com (optional)">
+
+          <label class="field-label">Tech Tags <span style="font-size:10px;font-weight:400;opacity:.6;">comma-separated</span></label>
+          <input type="text" id="code-tags" class="field-input" placeholder="HTML, CSS, JavaScript, Firebase">
+
+          <label class="field-label" style="margin-top:var(--space-sm);">Status</label>
+          <select id="code-status" class="field-select">
+            <option value="live">Live</option>
+            <option value="wip">In Progress</option>
+            <option value="archived">Archived</option>
+          </select>
+
+          <label class="field-label" style="margin-top:var(--space-sm);">Banner Style</label>
+          <select id="code-banner" class="field-select">
+            <option value="banner-green">Forest Green</option>
+            <option value="banner-blue">Soft Blue</option>
+            <option value="banner-moss">Dark Moss</option>
+            <option value="banner-beige">Warm Beige</option>
+            <option value="banner-teal">Teal</option>
+            <option value="banner-dark">Deep Dark</option>
+          </select>
+        </div>
+
+        <!-- Add Sections -->
+        <div class="control-section">
+          <div class="control-section-title">Add Sections</div>
+          <div class="section-buttons">
+            <button id="btn-add-title" class="section-btn">
+              <span class="section-btn-icon"><svg style="width:14px;height:14px;flex-shrink:0;vertical-align:middle;display:inline-block;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M17 3l4 4-12 12H5v-4L17 3z"/><line x1="15" y1="5" x2="19" y2="9"/></svg></span>
+              <span class="section-btn-text">Title Block</span>
+            </button>
+            <button id="btn-add-text" class="section-btn">
+              <span class="section-btn-icon"><svg style="width:14px;height:14px;flex-shrink:0;vertical-align:middle;display:inline-block;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M2 4h8a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H2z"/><path d="M22 4h-8a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h8z"/></svg></span>
+              <span class="section-btn-text">Text Block</span>
+            </button>
+            <button id="btn-add-paragraph" class="section-btn">
+              <span class="section-btn-icon">¶</span>
+              <span class="section-btn-text">Paragraph</span>
+            </button>
+            <button id="btn-add-quote" class="section-btn">
+              <span class="section-btn-icon" style="font-size:1.3em;">"</span>
+              <span class="section-btn-text">Quote Block</span>
+            </button>
+            <button id="btn-add-divider" class="section-btn">
+              <span class="section-btn-icon">—</span>
+              <span class="section-btn-text">Divider</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Image Upload -->
+        <div class="control-section">
+          <div class="control-section-title">
+            <svg style="width:15px;height:15px;flex-shrink:0;vertical-align:middle;display:inline-block;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><rect x="3" y="3" width="18" height="18"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg> Image
+          </div>
+          <div class="image-upload-area" id="btn-upload-image">
+            <div class="upload-icon">
+              <svg style="width:32px;height:32px;flex-shrink:0;vertical-align:middle;display:inline-block;opacity:0.6;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><rect x="3" y="3" width="18" height="18"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            </div>
+            <div class="upload-text">Click to upload an image<br><small>Stored in Firebase Storage</small></div>
+          </div>
+          <input type="file" id="image-upload-input" accept="image/*" style="display:none">
+        </div>
+
+        <!-- Tips (collapsible) -->
+        <div class="control-section" id="tips-control-section">
+          <div class="control-section-title" style="display:flex;align-items:center;justify-content:space-between;">
+            Keyboard Shortcuts
+            <button id="tips-toggle-btn" style="background:none;border:none;cursor:pointer;font-size:1rem;color:var(--forest-green);padding:0;line-height:1;">−</button>
+          </div>
+          <div id="tips-body">
+            <div class="shortcut-grid">
+              <span class="shortcut-key">Ctrl+S</span><span class="shortcut-desc">Save</span>
+              <span class="shortcut-key">Ctrl+N</span><span class="shortcut-desc">New post</span>
+              <span class="shortcut-key">Ctrl+P</span><span class="shortcut-desc">Preview</span>
+              <span class="shortcut-key">Ctrl+D</span><span class="shortcut-desc">Duplicate section</span>
+              <span class="shortcut-key">Ctrl+↑↓</span><span class="shortcut-desc">Move section</span>
+              <span class="shortcut-key">Ctrl+Z</span><span class="shortcut-desc">Undo</span>
+              <span class="shortcut-key">Tab</span><span class="shortcut-desc">Next section</span>
+              <span class="shortcut-key">Shift+Tab</span><span class="shortcut-desc">Prev section</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section Reorder -->
+        <div class="control-section" id="section-reorder-panel" style="display:none;">
+          <div class="control-section-title">Section Order</div>
+          <p style="font-size:var(--text-xs);color:var(--text-secondary);margin:0 0 8px;">Drag rows to reorder, or use arrows.</p>
+          <div id="section-order-list" class="section-order-list"></div>
+        </div>
+
+        <!-- Navigate -->
+        <div class="control-section">
+          <div class="control-section-title">Navigate</div>
+          <div style="display:flex; flex-direction:column; gap:var(--space-xs);">
+            <a href="blog.html" style="font-size:var(--text-sm); color:var(--forest-green); font-weight:var(--font-semibold); display:flex; align-items:center; gap:5px;">
+              <svg style="width:13px;height:13px;flex-shrink:0;vertical-align:middle;display:inline-block;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M2 4h8a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H2z"/><path d="M22 4h-8a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h8z"/></svg> View Blog
+            </a>
+            <a href="poems.html" style="font-size:var(--text-sm); color:var(--forest-green); font-weight:var(--font-semibold); display:flex; align-items:center; gap:5px;">
+              <svg style="width:13px;height:13px;flex-shrink:0;vertical-align:middle;display:inline-block;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M20 4C12 4 6 10 5 20"/><path d="M20 4c-4 8-10 12-15 16"/><line x1="5" y1="20" x2="8" y2="17"/></svg> View Poems
+            </a>
+            <a href="stories.html" style="font-size:var(--text-sm); color:var(--forest-green); font-weight:var(--font-semibold); display:flex; align-items:center; gap:5px;">
+              <svg style="width:13px;height:13px;flex-shrink:0;vertical-align:middle;display:inline-block;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M18 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg> View Stories
+            </a>
+            <a href="mediahub.html" style="font-size:var(--text-sm); color:var(--forest-green); font-weight:var(--font-semibold); display:flex; align-items:center; gap:5px;">
+              <svg style="width:13px;height:13px;flex-shrink:0;vertical-align:middle;display:inline-block;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><rect x="2" y="2" width="20" height="20"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg> View MediaHub
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+  </div>
+
+  <!-- Mobile Bottom Toolbar -->
+  <div class="mobile-toolbar" id="mobile-toolbar">
+    <button class="mobile-toolbar-btn" onclick="document.getElementById('editor-sidebar').classList.toggle('open')">
+      <svg style="width:18px;height:18px;flex-shrink:0;vertical-align:middle;display:inline-block;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M4 6h16v13H4z"/><path d="M4 6l2-3h6l2 3"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="13" y2="15"/></svg> Posts
+    </button>
+    <button class="mobile-toolbar-btn" onclick="document.getElementById('editor-controls').classList.toggle('open')">
+      <svg style="width:18px;height:18px;flex-shrink:0;vertical-align:middle;display:inline-block;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/><circle cx="8" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="10" cy="18" r="2" fill="currentColor" stroke="none"/></svg> Settings
+    </button>
+    <button class="mobile-toolbar-btn" id="btn-save-mobile">
+      <svg style="width:18px;height:18px;flex-shrink:0;vertical-align:middle;display:inline-block;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save
+    </button>
+  </div>
+
+  <!-- Template picker modal -->
+  <div id="template-picker-modal" style="display:none; position:fixed; inset:0; z-index:2000; background:rgba(0,0,0,0.7); align-items:center; justify-content:center;">
+    <div style="background:#F1EFE9; border:1px solid rgba(0,0,0,0.12); border-radius:0; padding:28px 28px 20px; width:min(480px,92vw); box-shadow:0 20px 60px rgba(0,0,0,0.25);">
+      <h3 style="font-family:var(--font-heading); color:var(--text-primary); margin:0 0 6px; font-size:1.2rem;">Start from a template</h3>
+      <p style="font-size:var(--text-sm); color:var(--text-secondary); margin:0 0 20px;">Or press Escape to start blank.</p>
+      <div class="template-grid" id="template-grid">
+        <button class="template-card" data-template="blank">
+          <span class="template-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
+          <span class="template-name">Blank</span>
+          <span class="template-hint">Empty canvas</span>
+        </button>
+        <button class="template-card" data-template="poem">
+          <span class="template-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a9 9 0 0 1 9 9c0 4-2.5 7-6 8.5"/><path d="M3 11c0-4.97 4.03-9 9-9"/><path d="M7 20.5C4 18.5 3 15.5 3 13"/><line x1="12" y1="22" x2="12" y2="13"/><line x1="8" y1="17" x2="12" y2="13"/><line x1="16" y1="17" x2="12" y2="13"/></svg></span>
+          <span class="template-name">Poem</span>
+          <span class="template-hint">Title + verse blocks</span>
+        </button>
+        <button class="template-card" data-template="blog">
+          <span class="template-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span>
+          <span class="template-name">Blog Post</span>
+          <span class="template-hint">Heading + paragraphs</span>
+        </button>
+        <button class="template-card" data-template="story">
+          <span class="template-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+          <span class="template-name">Story</span>
+          <span class="template-hint">Scene + prose blocks</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="js/firebase.js"></script>
+  <script src="js/builder.js"></script>
+  <script src="js/editor.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/firebase-gallery.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('btn-save-mobile')?.addEventListener('click', saveCurrentPost);
+
+      // Block format dropdown
+      document.getElementById('toolbar-block-format')?.addEventListener('change', (e) => {
+        document.execCommand('formatBlock', false, e.target.value);
+        e.target.blur();
+      });
+
+      // Sync color swatches to pickers
+      document.getElementById('toolbar-text-color')?.addEventListener('input', (e) => {
+        const sw = document.getElementById('color-swatch');
+        if (sw) sw.style.background = e.target.value;
+      });
+      document.getElementById('toolbar-highlight-color')?.addEventListener('input', (e) => {
+        const sw = document.getElementById('hl-swatch');
+        if (sw) sw.style.background = e.target.value;
+      });
+
+      // Delete button (now only in settings panel)
+      document.getElementById('btn-delete-post')?.addEventListener('click', deleteCurrentPost);
+
+      // Link insert
+      document.getElementById('btn-insert-link')?.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        const url = prompt('Enter URL:');
+        if (url) document.execCommand('createLink', false, url);
+      });
+
+      // Cover image live preview
+      const coverInput = document.getElementById('post-cover-input');
+      const coverWrap  = document.getElementById('post-cover-preview-wrap');
+      const coverImg   = document.getElementById('post-cover-preview-img');
+      function updateCoverPreview(url) {
+        if (url && coverImg && coverWrap) {
+          coverImg.src = url;
+          coverWrap.style.display = 'block';
+        } else if (coverWrap) {
+          coverWrap.style.display = 'none';
+        }
+      }
+      coverInput?.addEventListener('input',  (e) => updateCoverPreview(e.target.value.trim()));
+      coverInput?.addEventListener('change', (e) => updateCoverPreview(e.target.value.trim()));
+
+      // Featured toggle marks dirty
+      document.getElementById('post-featured-toggle')?.addEventListener('change', () => {
+        if (typeof markDirty === 'function') markDirty();
+      });
+    });
+  </script>
+
+  <!-- ── Star Rating Widget ─────────────────────────────── -->
+  <style>
+    .star-rating-input {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: var(--space-xs);
+      flex-wrap: wrap;
+    }
+    .star-rating-row {
+      display: flex;
+      gap: 3px;
+    }
+    .sri-star {
+      font-size: 1.4rem;
+      color: var(--warm-beige);
+      cursor: pointer;
+      transition: color 0.12s ease, transform 0.1s ease;
+      user-select: none;
+      line-height: 1;
+    }
+    .sri-star.active  { color: #f5c431; }
+    .sri-star.hover   { color: #f5c431; opacity: 0.7; }
+    .sri-star:hover   { transform: scale(1.15); }
+    .sri-value-label  {
+      font-size: var(--text-xs);
+      color: var(--text-secondary);
+      min-width: 52px;
+    }
+    .rating-clear-btn {
+      background: none;
+      border: none;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      margin-left: 4px;
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      transition: color var(--transition-fast), background var(--transition-fast);
+    }
+    .rating-clear-btn:hover { color: var(--alert-red); background: rgba(214,107,107,0.1); }
+  </style>
+  <script>
+    (function initStarRatings() {
+      ['movies', 'tvshows'].forEach(cat => {
+        const wrap   = document.getElementById(cat + '-star-rating');
+        const hidden = document.getElementById(cat + '-rating');
+        const label  = document.getElementById(cat + '-rating-label');
+        if (!wrap || !hidden || !label) return;
+
+        const stars = wrap.querySelectorAll('.sri-star');
+
+        function setRating(val) {
+          hidden.value = val || '';
+          label.textContent = val ? val + '/10' : 'Not rated';
+          stars.forEach((s, i) => {
+            s.classList.toggle('active', i < val);
+          });
+          if (typeof markDirty === 'function') markDirty();
+        }
+
+        stars.forEach((star, idx) => {
+          star.addEventListener('click', () => setRating(idx + 1));
+          star.addEventListener('mouseenter', () => {
+            stars.forEach((s, i) => s.classList.toggle('hover', i <= idx));
+          });
+        });
+        wrap.addEventListener('mouseleave', () => {
+          stars.forEach(s => s.classList.remove('hover'));
+        });
+
+        // Expose set function so editor.js load can call it
+        wrap._setRating = setRating;
+      });
+    })();
+
+    function clearStarRating(cat) {
+      const wrap = document.getElementById(cat + '-star-rating');
+      if (wrap && wrap._setRating) wrap._setRating(0);
+    }
+  </script>
+</body>
+</html>

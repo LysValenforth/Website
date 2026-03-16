@@ -1,0 +1,2340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <title>My Dream Map</title>
+  <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cinzel+Decorative:wght@400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+  <style>
+
+    :root {
+      --fg:        #C9A65B;       /* samurai gold */
+      --moss:      #F5F3EE;       /* text cream (was dark green, now light for dark panels) */
+      --beige:     rgba(201,166,91,.15);  /* gold tint border */
+      --blue:      rgba(214,69,69,.15);   /* crimson tint (was blue) */
+      --cream:     #F5F3EE;
+      --bg:        #F5F2EA;       /* parchment */
+      --surface:   #111113;       /* dark panel */
+      --txt:       #F1EFE9;       /* light text on dark */
+      --txt2:      rgba(245,243,238,.45);
+      --red:       #D64545;       /* ghost crimson */
+      --amber:     #C9A65B;       /* gold */
+      --h:         'Cinzel', serif;
+      --serif:     'EB Garamond', Georgia, serif;
+      --b:         'Cinzel', serif;
+      --r1:        0px; --r2:0px; --r3:0px;   /* square geometry */
+      --sh:        4px 4px 0 rgba(0,0,0,.35);
+      --shf:       6px 6px 0 rgba(0,0,0,.45);
+      --bd:        1px solid rgba(201,166,91,.15);
+      --tr:        0.18s ease;
+      --nav:       60px;
+      --bnav:      60px;
+      --map-default:  #2A2A2E;
+      --map-dream:    #8B6914;
+      --map-visited:  #4a3520;
+      --map-border:   rgba(201,166,91,.3);
+    }
+
+    *,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
+    html, body { height:100%; overflow:hidden }
+    body {
+      font-family: var(--b);
+      background: #0F0F10;
+      color: var(--txt);
+      display: flex;
+      flex-direction: column;
+      animation: fadeIn .4s ease;
+    }
+
+    /* ── Keyframes ─────────────────────────────────────────────────────── */
+    @keyframes fadeIn   { from{opacity:0} to{opacity:1} }
+    @keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:.4} }
+    @keyframes slideInL { from{transform:translateX(-100%);opacity:0} to{transform:translateX(0);opacity:1} }
+    @keyframes slideInR { from{transform:translateX(100%);opacity:0} to{transform:translateX(0);opacity:1} }
+    @keyframes slideUp  { from{transform:translateY(100%)} to{transform:translateY(0)} }
+    @keyframes shake    { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+    @keyframes spin     { to{transform:rotate(360deg)} }
+    @keyframes popIn    { from{transform:scale(.92);opacity:0} to{transform:scale(1);opacity:1} }
+    @keyframes floatUp  { 0%{transform:translateY(4px);opacity:0} 100%{transform:translateY(0);opacity:1} }
+
+    /* ── Noise texture ─────────────────────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: .03;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── Decorative corner ornament ─────────────────────────────────────── */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0; right: 0;
+      width: 320px; height: 320px;
+      display: none;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Top Bar ─────────────────────────────────────────────────────────── */
+    .topbar {
+      height: var(--nav);
+      background: #0F0F10;
+      border-bottom: 1px solid rgba(201,166,91,.15);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 14px;
+      flex-shrink: 0;
+      z-index: 100;
+      box-shadow: 0 1px 0 rgba(46,64,40,.06), 0 2px 12px rgba(46,64,40,.04);
+      position: relative;
+    }
+
+    /* subtle green top accent line */
+    .topbar::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #D64545, #C9A65B, transparent);
+      opacity: .6;
+    }
+
+    .logo {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 1rem;
+      letter-spacing: .12em;
+      color: #F5F3EE;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      white-space: nowrap;
+      letter-spacing: .01em;
+    }
+
+    .logo-icon-wrap {
+      width: 34px; height: 34px;
+      background: #0F0F10;
+      border: 1px solid rgba(201,166,91,.3);
+      border-radius: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--sh);
+      flex-shrink: 0;
+    }
+
+    .sep {
+      width: 1px;
+      height: 28px;
+      background: linear-gradient(to bottom, transparent, rgba(201,166,91,.2), transparent);
+      flex-shrink: 0;
+    }
+
+    .top-sub {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: .9rem;
+      color: rgba(245,243,238,.4);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .top-right { margin-left:auto; display:flex; align-items:center; gap:8px; flex-shrink:0 }
+
+    /* share banner */
+    .share-banner {
+      background: rgba(201,166,91,.08);
+      border-bottom: 1px solid rgba(201,166,91,.15);
+      padding: 7px 18px;
+      font-size: .6rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(201,166,91,.7);
+      display: none;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+      font-weight: 600;
+      letter-spacing: .02em;
+    }
+    .share-banner.visible { display:flex }
+
+    /* editor badge */
+    .ed-badge {
+      display: none;
+      align-items: center;
+      gap: 7px;
+      background: rgba(201,166,91,.12);
+      color: #C9A65B;
+      border: 1px solid rgba(201,166,91,.25);
+      border-radius: 0;
+      padding: 5px 13px;
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .03em;
+      box-shadow: var(--sh);
+    }
+    .ed-badge.visible { display:flex }
+    .sdot { width:7px; height:7px; border-radius:50%; background:var(--blue); flex-shrink:0 }
+    .sdot.saved   { background: #7ecf7e }
+    .sdot.saving  { background: #e8a838; animation: pulse 1s infinite }
+    .ib { background:none; border:none; cursor:pointer; display:flex; align-items:center; padding:2px; color:inherit; opacity:.75; transition:opacity var(--tr) }
+    .ib:hover { opacity:1 }
+
+    /* icon btn */
+    .icon-btn {
+      background: transparent;
+      border: 1px solid rgba(201,166,91,.2);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: 0;
+      font-family: 'Cinzel', serif;
+      font-size: .58rem;
+      font-weight: 500;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(245,243,238,.6);
+      transition: all var(--tr);
+      text-decoration: none;
+      box-shadow: none;
+    }
+    .icon-btn:hover { background: rgba(201,166,91,.08); border-color: rgba(201,166,91,.4); color: #C9A65B; transform: none; box-shadow: none; }
+    .icon-btn.active { background: rgba(201,166,91,.12); color: #C9A65B; border-color: #C9A65B; }
+
+    /* ── Main Layout ─────────────────────────────────────────────────────── */
+    .layout { display:flex; flex:1; overflow:hidden; position:relative }
+
+    /* ── Editor Left Panel ───────────────────────────────────────────────── */
+    .ep {
+      width: 300px;
+      min-width: 300px;
+      background: #111113;
+      border-right: var(--bd);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateX(-100%);
+      transition: transform .3s cubic-bezier(.32,.72,0,1);
+      position: absolute;
+      top: 0; left: 0;
+      height: 100%;
+      z-index: 50;
+      box-shadow: 4px 0 24px rgba(46,64,40,.12);
+    }
+    .ep.open { transform:translateX(0) }
+
+    .ep-hd {
+      padding: 14px 16px;
+      background: #0F0F10;
+      border-bottom: 1px solid rgba(201,166,91,.15);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ep-hd::before { content:''; position:absolute; bottom:0; left:0; right:0; height:1px; background:linear-gradient(90deg,#D64545,transparent); opacity:.4; }
+    .ep-hd::after { display:none; }
+
+    .ep-title {
+      font-family: 'Cinzel', serif;
+      font-size: .65rem;
+      font-weight: 500;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: rgba(201,166,91,.7);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .ep-close {
+      background: rgba(214,69,69,.08);
+      border: 1px solid rgba(214,69,69,.2);
+      cursor: pointer;
+      color: rgba(245,243,238,.6);
+      padding: 5px;
+      border-radius: 0;
+      display: flex;
+      align-items: center;
+      transition: all var(--tr);
+      position: relative;
+      z-index: 1;
+    }
+    .ep-close:hover { background: rgba(214,69,69,.15); color: #D64545; border-color: #D64545; }
+
+    .ep-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* selected country card */
+    .ep-cc {
+      background: rgba(201,166,91,.04);
+      border: 1px solid rgba(201,166,91,.12);
+      border-radius: 0;
+      padding: 11px 13px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    .ep-cc::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 2px;
+      background: #D64545;
+    }
+
+    .ep-clabel { font-size:.62rem; color:var(--txt2); font-weight:700; text-transform:uppercase; letter-spacing:.1em; display:block; margin-bottom:2px }
+    .ep-cname  { font-family:'Cinzel',serif; font-size:.85rem; font-weight:400; letter-spacing:.06em; color:#C9A65B; }
+    .ep-nosel  { font-family:'EB Garamond',serif; font-size:.88rem; font-style:italic; color:rgba(245,243,238,.25); }
+
+    .ep-fields { display:none; flex-direction:column; gap:11px }
+
+    .sec-lbl {
+      font-family: 'Cinzel', serif;
+      font-size: .52rem;
+      font-weight: 500;
+      letter-spacing: .2em;
+      color: rgba(201,166,91,.5);
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(201,166,91,.1);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .fl { display:flex; flex-direction:column; gap:3px }
+    .flabel {
+      font-size:.7rem;
+      font-weight:600;
+      color:var(--txt2);
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      display:flex;
+      align-items:center;
+      gap:3px;
+    }
+
+    input.fi, textarea.fi, select.fi {
+      width: 100%;
+      padding: 8px 11px;
+      font-family: var(--b);
+      font-size: .85rem;
+      color: var(--txt);
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(201,166,91,.15);
+      border-radius: 0;
+      outline: none;
+      color: rgba(245,243,238,.85);
+      transition: border-color var(--tr);
+    }
+    input.fi:focus, textarea.fi:focus, select.fi:focus {
+      border-color: rgba(201,166,91,.45);
+      box-shadow: none;
+      background: rgba(255,255,255,.06);
+    }
+    input.fi::placeholder, textarea.fi::placeholder { color: rgba(245,243,238,.2); }
+    textarea.fi { resize:vertical; min-height:68px; line-height:1.6 }
+
+    .char-counter { font-size:.65rem; color:var(--txt2); text-align:right; margin-top:2px }
+    .char-counter.warn { color:var(--amber) }
+    .char-counter.over { color:var(--red) }
+
+    /* Status toggle */
+    .status-toggle { display:flex; gap:7px }
+    .stoggle-btn {
+      flex: 1;
+      padding: 8px 8px;
+      border-radius: 0;
+      border: 1px solid rgba(201,166,91,.15);
+      background: transparent;
+      font-family: 'Cinzel', serif;
+      font-size: .56rem;
+      font-weight: 500;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all var(--tr);
+      color: rgba(245,243,238,.35);
+    }
+    .stoggle-btn:hover { border-color:rgba(201,166,91,.35); color:rgba(245,243,238,.7); }
+    .stoggle-btn.dream.sel   { background:rgba(201,166,91,.1); border-color:#C9A65B; color:#C9A65B; box-shadow:none; }
+    .stoggle-btn.visited.sel { background:rgba(214,69,69,.1); border-color:#D64545; color:#D64545; box-shadow:none; }
+
+    /* Upload area */
+    .uarea {
+      border: 2px dashed rgba(201,166,91,.2);
+      border-radius: 0;
+      padding: 14px;
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--tr);
+      position: relative;
+      background: transparent;
+    }
+    .uarea:hover, .uarea.dragover { border-color:#C9A65B; background: rgba(201,166,91,.04); }
+    .uarea.uploading { pointer-events:none; opacity:.7 }
+    .utxt { font-size:.76rem; color:var(--txt2); line-height:1.6 }
+    .utxt small { display:block; font-size:.66rem; margin-top:1px; opacity:.65 }
+    .upbar { height:3px; background:var(--beige); border-radius:2px; margin-top:6px; overflow:hidden; display:none }
+    .upbar.vis { display:block }
+    .upfill { height:100%; background:#C9A65B; border-radius:0; width:0%; transition:width .2s ease; }
+    .img-prev { width:100%; height:90px; border-radius:var(--r2); border:var(--bd); object-fit:cover; display:none; margin-top:6px }
+    .img-prev.vis { display:block }
+    .img-clr { background:none; border:none; cursor:pointer; color:var(--red); font-size:.7rem; font-family:var(--b); text-decoration:underline; display:none; margin-top:3px }
+    .img-clr.vis { display:block }
+
+    /* Spots */
+    .spots-ed { display:flex; flex-direction:column; gap:5px }
+    .spot-row {
+      display: flex;
+      gap: 5px;
+      align-items: flex-start;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(201,166,91,.1);
+      border-radius: 0;
+      padding: 8px 9px;
+      cursor: grab;
+      user-select: none;
+      transition: all var(--tr);
+    }
+    .spot-row:hover { border-color:rgba(201,166,91,.3); box-shadow: none; }
+    .spot-row.dragging   { opacity:.4; border-color:#C9A65B; }
+    .spot-row.dragover-spot { border-color:#C9A65B; background:rgba(201,166,91,.06); }
+    .spot-drag-handle { color:var(--txt2); cursor:grab; padding:2px 3px; display:flex; align-items:center; opacity:.4; flex-shrink:0; margin-top:2px }
+    .spot-inputs { flex:1; display:flex; flex-direction:column; gap:3px }
+    .spot-inputs input { width:100%; padding:5px 8px; font-family:'EB Garamond',serif; font-size:.9rem; color:rgba(245,243,238,.8); background:rgba(255,255,255,.04); border:1px solid rgba(201,166,91,.1); border-radius:0; outline:none; transition:border-color .15s; }
+    .spot-inputs input:focus { border-color:rgba(201,166,91,.4); }
+    .spot-inputs input::placeholder { color:rgba(245,243,238,.2); }
+    .spot-del { background:none; border:none; cursor:pointer; color:var(--red); padding:2px; display:flex; align-items:center; opacity:.4; transition:opacity var(--tr); flex-shrink:0; margin-top:2px }
+    .spot-del:hover { opacity:1 }
+
+    /* Journal */
+    .journal-section { display:none; flex-direction:column; gap:9px }
+    .journal-section.vis { display:flex }
+
+    /* ep tip */
+    .ep-tip {
+      background: rgba(201,166,91,.04);
+      border: 1px solid rgba(201,166,91,.1);
+      border-radius: 0;
+      padding: 12px 14px;
+      font-size: .8rem;
+      color: var(--txt2);
+      line-height: 1.75;
+      font-family: var(--serif);
+      font-style: italic;
+    }
+    .ep-tip strong { font-family:var(--b); font-style:normal; display:block; margin-bottom:4px; color:var(--moss); font-size:.82rem }
+
+    /* Firebase status */
+    .fb-s {
+      padding: 7px 11px;
+      font-size: .72rem;
+      border-radius: var(--r2);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      flex-shrink: 0;
+      letter-spacing: .02em;
+    }
+    .fb-s.ok      { background:rgba(201,166,91,.08); color:#C9A65B; border:1px solid rgba(201,166,91,.2); }
+    .fb-s.err     { background:rgba(192,57,43,.1);  color:var(--red); border:1px solid rgba(192,57,43,.25) }
+    .fb-s.loading { background:rgba(255,255,255,.03); color:rgba(245,243,238,.3); border:1px solid rgba(201,166,91,.1); }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: 'Cinzel', serif;
+      font-size: .6rem;
+      font-weight: 500;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      padding: 10px 18px;
+      border-radius: 0;
+      border: 1px solid rgba(201,166,91,.2);
+      cursor: pointer;
+      transition: all var(--tr);
+      width: 100%;
+      margin-top: 1px;
+    }
+    .btn-p {
+      background: #C9A65B;
+      color: #0F0F10;
+      border-color: #C9A65B;
+      box-shadow: none;
+    }
+    .btn-p:hover:not(:disabled) { background:#D64545; border-color:#D64545; color:#fff; transform:none; box-shadow:none; filter:none; }
+    .btn-p:disabled { opacity:.4; cursor:not-allowed; }
+    .btn-g { background:transparent; color:rgba(245,243,238,.4); border-color:rgba(201,166,91,.15); font-size:.56rem; padding:7px 12px; width:auto; margin-top:0; }
+    .btn-g:hover { border-color:rgba(201,166,91,.4); color:#C9A65B; }
+    .btn-d { background:transparent; color:#D64545; border-color:rgba(214,69,69,.3); }
+    .btn-d:hover { background:rgba(214,69,69,.1); border-color:#D64545; color:#D64545; }
+
+    /* ── Map ─────────────────────────────────────────────────────────────── */
+    .map-area { flex:1; background:#0F0F10; position:relative; overflow:hidden }
+    #main { width:100%; height:100% }
+
+    .map-hint {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(10,10,11,.9);
+      color: rgba(245,243,238,.8);
+      font-family: 'Cinzel', serif;
+      font-size: .58rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      padding: 8px 20px;
+      border-radius: 0;
+      pointer-events: none;
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: opacity .4s ease;
+      white-space: nowrap;
+      border: 1px solid rgba(255,255,255,.15);
+      box-shadow: 0 4px 20px rgba(0,0,0,.2);
+    }
+    .map-hint.hidden { opacity:0; pointer-events:none }
+
+    /* map legend */
+    .map-legend {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(10,10,11,.9);
+      border: 1px solid rgba(201,166,91,.15);
+      border-radius: 0;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      backdrop-filter: blur(8px);
+      pointer-events: none;
+      box-shadow: 0 2px 16px rgba(46,64,40,.1), var(--sh);
+    }
+
+    /* legend title */
+    .map-legend::before {
+      content: 'MAP KEY';
+      display: block;
+      font-family: 'Cinzel', serif;
+      font-size: .52rem;
+      font-weight: 500;
+      letter-spacing: .2em;
+      color: rgba(201,166,91,.5);
+      margin-bottom: 2px;
+      font-family: var(--b);
+    }
+
+    .legend-item { display:flex; align-items:center; gap:8px; font-family:'Cinzel',serif; font-size:.52rem; letter-spacing:.1em; text-transform:uppercase; color:rgba(245,243,238,.5); font-weight:400; }
+    .legend-dot { width:12px; height:12px; border-radius:0; flex-shrink:0; border:1px solid rgba(201,166,91,.2); }
+
+    /* ── Viewer Right Panel ──────────────────────────────────────────────── */
+    .vp {
+      width: 320px;
+      min-width: 320px;
+      background: #111113;
+      border-left: var(--bd);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: width .3s ease;
+      box-shadow: -2px 0 16px rgba(46,64,40,.06);
+    }
+
+    .vp-hd {
+      padding: 14px 18px 12px;
+      border-bottom: 1px solid rgba(201,166,91,.12);
+      background: #0F0F10;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .vp-hd::before {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, #D64545, transparent);
+      opacity: .4;
+    }
+
+    .vp-title {
+      font-family: 'Cinzel', serif;
+      font-size: .65rem;
+      font-weight: 500;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: rgba(201,166,91,.7);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 2px;
+    }
+
+    .vp-hint {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: .88rem;
+      color: var(--txt2);
+    }
+
+    .vp-empty {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 20px;
+      text-align: center;
+      gap: 12px;
+      background: #111113;
+    }
+    .vp-empty.hidden { display:none }
+
+    .vp-ei {
+      width: 56px; height: 56px;
+      background: rgba(201,166,91,.06);
+      border-radius: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(201,166,91,.15);
+      box-shadow: none;
+    }
+
+    .vp-empty h3 {
+      font-family: var(--h);
+      font-size: 1.2rem;
+      color: var(--txt);
+      margin-bottom: 3px;
+    }
+
+    .vp-empty p {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: .9rem;
+      color: var(--txt2);
+      line-height: 1.65;
+    }
+
+    .vp-content { flex:1; overflow-y:auto; display:none; flex-direction:column; animation:floatUp .25s ease }
+    .vp-content.vis { display:flex }
+
+    .vp-hero { width:100%; height:160px; object-fit:cover; display:none; border-bottom:var(--bd) }
+    .vp-hero.vis { display:block }
+
+    .vp-heroph {
+      width: 100%;
+      height: 160px;
+      background: rgba(201,166,91,.04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: var(--bd);
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .vp-heroph::before { display:none; }
+
+    .vp-info { padding:14px 16px; display:flex; flex-direction:column; gap:12px }
+
+    .vp-cn {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      font-weight: 400;
+      letter-spacing: .08em;
+      color: #F5F3EE;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      line-height: 1.3;
+    }
+
+    .status-pill {
+      font-size: .72rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: var(--r3);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      letter-spacing: .02em;
+    }
+    .pill-dream   { background:rgba(201,166,91,.1); color:#C9A65B; border:1px solid rgba(201,166,91,.3); border-radius:0; }
+    .pill-visited { background:rgba(214,69,69,.1); color:#D64545; border:1px solid rgba(214,69,69,.3); border-radius:0; }
+
+    .vp-quote {
+      background: rgba(201,166,91,.04);
+      border: 1px solid rgba(201,166,91,.12);
+      border-radius: 0;
+      padding: 12px 14px 12px 22px;
+      position: relative;
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: 1rem;
+      color: rgba(245,243,238,.75);
+      line-height: 1.7;
+      border-left: 2px solid #D64545;
+    }
+    .vp-quote::before {
+      content: '\201C';
+      position: absolute;
+      left: 6px; top: 4px;
+      font-size: 1.8rem;
+      color: var(--fg);
+      opacity: .3;
+      font-family: Georgia, serif;
+      line-height: 1;
+    }
+
+    .vp-slbl {
+      font-size: .65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--fg);
+      margin-bottom: 6px;
+    }
+
+    .vp-spots  { display:flex; flex-direction:column; gap:6px }
+
+    .vp-spot {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      padding: 8px 10px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(201,166,91,.1);
+      border-radius: 0;
+      transition: all var(--tr);
+    }
+    .vp-spot:hover { border-color:rgba(201,166,91,.3); transform:translateX(3px); box-shadow:none; }
+
+    .vp-si {
+      width: 22px; height: 22px;
+      background: rgba(201,166,91,.08);
+      border-radius: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border: 1px solid rgba(201,166,91,.15);
+    }
+
+    .vp-sn { font-family:var(--h); font-size:.88rem; color:var(--txt); margin-bottom:2px }
+    .vp-sd { font-size:.73rem; color:var(--txt2); line-height:1.5; margin:0; font-family:var(--serif); font-style:italic }
+
+    .vp-journal {
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(201,166,91,.1);
+      border-radius: 0;
+      padding: 11px 13px;
+      font-family: 'EB Garamond', serif;
+      font-size: .93rem;
+      color: rgba(245,243,238,.7);
+      line-height: 1.8;
+      white-space: pre-wrap;
+      position: relative;
+      border-left: 2px solid rgba(201,166,91,.3);
+    }
+
+    .vp-na {
+      margin: 0 14px 10px;
+      padding: 10px 13px;
+      background: linear-gradient(135deg, rgba(232,220,200,.3), rgba(197,216,232,.2));
+      border: var(--bd);
+      border-radius: var(--r2);
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: .82rem;
+      color: var(--txt2);
+      display: none;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .vp-loader { padding:24px; text-align:center; color:var(--txt2); font-size:.82rem; display:none; align-items:center; justify-content:center; gap:8px; flex:1 }
+    .vp-loader.vis { display:flex }
+
+    .vp-ft {
+      padding: 9px 16px;
+      border-top: 1px solid rgba(201,166,91,.1);
+      background: #0F0F10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .vp-count {
+      font-size: .74rem;
+      color: var(--txt2);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--serif);
+      font-style: italic;
+    }
+
+    /* ── List Overlay ────────────────────────────────────────────────────── */
+    .list-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: none;
+      flex-direction: column;
+      background: #0F0F10;
+      animation: fadeIn .22s ease;
+    }
+    .list-overlay.vis { display:flex }
+
+    .list-hd {
+      padding: 16px 22px;
+      border-bottom: 1px solid rgba(201,166,91,.12);
+      background: #111113;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      box-shadow: 0 2px 12px rgba(46,64,40,.06);
+      position: relative;
+    }
+    .list-hd::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, #D64545, #C9A65B, transparent);
+      opacity: .5;
+    }
+
+    .list-title {
+      font-family: 'Cinzel', serif;
+      font-size: .75rem;
+      font-weight: 500;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: rgba(201,166,91,.7);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .list-filters {
+      display: flex;
+      gap: 7px;
+      padding: 11px 22px;
+      border-bottom: 1px solid rgba(201,166,91,.1);
+      flex-shrink: 0;
+      flex-wrap: wrap;
+      background: #0F0F10;
+      align-items: center;
+    }
+
+    .filter-btn {
+      padding: 5px 14px;
+      border-radius: 0;
+      border: 1px solid rgba(201,166,91,.15);
+      background: transparent;
+      font-family: 'Cinzel', serif;
+      font-size: .52rem;
+      font-weight: 500;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      color: rgba(245,243,238,.35);
+      transition: all var(--tr);
+    }
+    .filter-btn:hover { border-color:rgba(201,166,91,.4); color:#C9A65B; }
+    .filter-btn.active { background:rgba(201,166,91,.1); color:#C9A65B; border-color:#C9A65B; box-shadow:none; }
+
+    .list-search {
+      flex: 1;
+      padding: 6px 13px;
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: .95rem;
+      color: rgba(245,243,238,.8);
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(201,166,91,.15);
+      border-radius: 0;
+      outline: none;
+      min-width: 120px;
+      transition: border-color var(--tr);
+    }
+    .list-search:focus { border-color:rgba(201,166,91,.4); box-shadow:none; }
+    .list-search::placeholder { color:rgba(245,243,238,.2); }
+
+    .list-grid {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px 22px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 14px;
+      align-content: start;
+    }
+
+    .list-card {
+      background: #111113;
+      border: 1px solid rgba(201,166,91,.12);
+      border-radius: 0;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all var(--tr);
+      box-shadow: none;
+      position: relative;
+    }
+    .list-card:hover { transform:translate(-3px,-3px); box-shadow:6px 6px 0 rgba(0,0,0,.4); border-color:rgba(201,166,91,.3); }
+
+    .list-card-img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      display: block;
+      background: rgba(201,166,91,.06);
+    }
+    .list-card-img.ph { display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden }
+    .list-card-img.ph::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,.15) 1px, transparent 1px);
+      background-size: 14px 14px;
+    }
+
+    .list-card-body { padding:11px 13px }
+    .list-card-name { font-family:'Cinzel',serif; font-size:.75rem; font-weight:400; letter-spacing:.06em; color:#F5F3EE; margin-bottom:5px; }
+    .list-card-meta { display:flex; align-items:center; gap:6px; font-size:.72rem; color:var(--txt2) }
+
+    .list-empty { grid-column:1/-1; text-align:center; padding:56px 20px; color:var(--txt2) }
+    .list-empty div { font-size:2.5rem; margin-bottom:12px }
+
+    /* ── Lock Overlay ────────────────────────────────────────────────────── */
+    .lock-ov {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.8);
+      backdrop-filter: blur(8px);
+      z-index: 600;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .lock-ov.vis { display:flex }
+
+    .lock-card {
+      background: #F1EFE9;
+      border: 1px solid rgba(0,0,0,.12);
+      border-radius: 0;
+      padding: 36px 38px;
+      text-align: center;
+      box-shadow: 0 24px 60px rgba(0,0,0,.28);
+      max-width: 340px;
+      width: 90%;
+      animation: popIn .28s cubic-bezier(.32,.72,0,1);
+      position: relative;
+      overflow: hidden;
+    }
+    .lock-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, #D64545, #C9A65B, transparent);
+      opacity: .6;
+    }
+
+    .lock-icon {
+      width: 50px; height: 50px;
+      background: rgba(0,0,0,.06);
+      border-radius: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 14px;
+      border: var(--bd);
+      box-shadow: 0 4px 16px rgba(46,64,40,.1);
+    }
+
+    .lock-title { font-family:'Cinzel Decorative',serif; font-size:1.1rem; color:#0F0F10; margin-bottom:5px; letter-spacing:.06em; }
+    .lock-sub { font-family:var(--serif); font-style:italic; font-size:.85rem; color:var(--txt2); margin-bottom:18px; line-height:1.6 }
+
+    .lock-inp {
+      width: 100%;
+      padding: 10px 14px;
+      font-family: 'EB Garamond',serif;
+      font-size: 1rem;
+      color: #0F0F10;
+      background: #fff;
+      border: 1px solid rgba(0,0,0,.15);
+      border-radius: 0;
+      outline: none;
+      text-align: center;
+      letter-spacing: .1em;
+      margin-bottom: 10px;
+      transition: border-color var(--tr);
+    }
+    .lock-inp:focus { border-color:#D64545; box-shadow:none; }
+    .lock-inp.error { border-color:#D64545; animation:shake .3s ease; }
+
+    .lock-cancel { margin-top:9px; background:none; border:none; color:var(--txt2); font-size:.78rem; cursor:pointer; font-family:var(--serif); font-style:italic; text-decoration:underline }
+    .lock-cancel:hover { color:var(--moss) }
+
+    /* ── Mobile Bottom Sheet ─────────────────────────────────────────────── */
+    .bs {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: #111113;
+      border-top: 1px solid rgba(201,166,91,.15);
+      border-radius: 0;
+      z-index: 150;
+      transform: translateY(100%);
+      transition: transform .35s cubic-bezier(.32,.72,0,1);
+      max-height: 82vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 -6px 32px rgba(0,0,0,.13);
+    }
+    .bs.open { transform:translateY(0) }
+    .bs-handle { width:36px; height:2px; background:rgba(201,166,91,.25); border-radius:0; margin:12px auto 6px; flex-shrink:0; cursor:pointer; }
+    .bs-inner { flex:1; overflow-y:auto; display:flex; flex-direction:column }
+    .bs-close { position:absolute; top:12px; right:16px; background:var(--beige); border:none; border-radius:50%; width:30px; height:30px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--txt2) }
+
+    /* ── Mobile Bottom Nav ───────────────────────────────────────────────── */
+    .bnav {
+      display: none;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: var(--bnav);
+      background: #0F0F10;
+      border-top: 1px solid rgba(201,166,91,.12);
+      z-index: 100;
+      align-items: center;
+      justify-content: space-around;
+      padding: 0 10px;
+      box-shadow: 0 -2px 16px rgba(46,64,40,.08);
+    }
+    .bnav-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px 4px;
+      border-radius: 0;
+      transition: all var(--tr);
+      color: rgba(245,243,238,.3);
+      font-family: 'Cinzel', serif;
+      font-size: .5rem;
+      font-weight: 400;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      min-height: var(--bnav);
+    }
+    .bnav-btn:hover, .bnav-btn.active { color:#C9A65B; }
+    .bnav-btn.active svg { stroke:#C9A65B; }
+    .bnav-btn.fab {
+      background: #C9A65B;
+      color: #0F0F10;
+      border-radius: 0;
+      width: 44px; height: 44px;
+      flex: none;
+      box-shadow: none;
+      font-size: 0;
+    }
+    .bnav-btn.fab svg { stroke:#0F0F10; }
+
+    /* ── Toast ───────────────────────────────────────────────────────────── */
+    #toast {
+      position: fixed;
+      bottom: 86px;
+      left: 50%;
+      transform: translateX(-50%) translateY(10px);
+      background: #0F0F10;
+      color: rgba(245,243,238,.85);
+      border: 1px solid rgba(201,166,91,.25);
+      padding: 9px 20px;
+      border-radius: 0;
+      font-family: 'Cinzel', serif;
+      font-size: .58rem;
+      font-weight: 400;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      opacity: 0;
+      transition: all .3s ease;
+      z-index: 9000;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      pointer-events: none;
+      white-space: nowrap;
+      box-shadow: 0 4px 20px rgba(0,0,0,.22);
+      border: 1px solid rgba(255,255,255,.12);
+      letter-spacing: .02em;
+    }
+    #toast.show { opacity:1; transform:translateX(-50%) translateY(0) }
+    #toast.err  { background:var(--red) }
+
+    /* spinner */
+    .spin {
+      width: 13px; height: 13px;
+      border: 2px solid var(--beige);
+      border-top-color: var(--fg);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      flex-shrink: 0;
+    }
+
+    /* scrollbars */
+    ::-webkit-scrollbar { width:5px }
+    ::-webkit-scrollbar-track { background:transparent }
+    ::-webkit-scrollbar-thumb { background:var(--beige); border-radius:3px }
+    ::-webkit-scrollbar-thumb:hover { background:rgba(74,103,65,.3) }
+
+    /* ── HOME btn: hide label on mobile ───────────────────────────────────── */
+    @media (max-width: 768px) {
+      .home-label { display: none; }
+      .home-btn   { padding: 7px 10px; min-width: 0; }
+    }
+
+    /* ── Bottom sheet drag row + preview header ───────────────────────────── */
+    .bs-drag-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 16px 0;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .bs-drag-row .bs-handle {
+      /* override absolute positioning from original */
+      position: static;
+      margin: 0;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+    }
+    .bs-drag-row .bs-close {
+      position: static;
+      margin-left: auto;
+    }
+    .bs-preview {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 18px 10px;
+      flex-shrink: 0;
+      border-bottom: 1px solid rgba(46,64,40,.08);
+      min-height: 36px;
+    }
+    .bs-preview:empty { display: none; }
+    .bs-preview-name {
+      font-family: var(--h);
+      font-size: 1.05rem;
+      color: var(--moss);
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* ── List stats summary line ──────────────────────────────────────────── */
+    .list-stats {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: .82rem;
+      color: var(--txt2);
+      margin-top: 3px;
+    }
+
+    /* ── List card letter tile ────────────────────────────────────────────── */
+    .list-card-letter {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .list-card-initial {
+      font-family: var(--h);
+      font-size: 2.4rem;
+      color: rgba(255,255,255,.85);
+      text-shadow: 0 2px 8px rgba(0,0,0,.18);
+      line-height: 1;
+      user-select: none;
+    }
+
+    /* ── Map empty state (first-visit prompt) ─────────────────────────────── */
+    .map-empty-state {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -58%);
+      background: rgba(15,15,16,.95);
+      border: 1px solid rgba(201,166,91,.2);
+      border-radius: 0;
+      padding: 20px 24px 16px;
+      text-align: center;
+      max-width: 260px;
+      width: 85%;
+      pointer-events: none;
+      box-shadow: 0 4px 24px rgba(46,64,40,.12);
+      z-index: 10;
+      animation: popIn .4s cubic-bezier(.32,.72,0,1) .6s both;
+    }
+    .map-empty-state.hidden { display: none; }
+    .mes-icon  { font-size: 2rem; margin-bottom: 8px; }
+    .mes-title {
+      font-family: 'Cinzel', serif;
+      font-size: .72rem;
+      font-weight: 400;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(201,166,91,.8);
+      margin-bottom: 6px;
+    }
+    .mes-sub {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: .82rem;
+      color: var(--txt2);
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+    .mes-arrow {
+      animation: floatUp 1.2s ease-in-out infinite alternate;
+      opacity: .5;
+    }
+
+    /* ── Dim backdrop behind bottom sheet ─────────────────────────────────── */
+    .map-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(20,32,18,.35);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s ease;
+      z-index: 5;
+    }
+    .map-backdrop.vis {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* ── Responsive ──────────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .vp { display:none }
+      .top-sub { display:none }
+    }
+
+    @media (max-width: 768px) {
+      :root { --nav:50px }
+      .layout { flex-direction:column }
+      .map-area { flex:1; background:#0F0F10; }
+      .bnav { display:flex }
+      body { padding-bottom:var(--bnav) }
+      #toast { bottom:calc(var(--bnav) + 14px) }
+
+      /* Hint pill — larger, more readable */
+      .map-hint {
+        bottom: calc(var(--bnav) + 18px);
+        font-size: .95rem;
+        padding: 10px 22px;
+        gap: 8px;
+        background: rgba(30,40,24,.88);
+      }
+
+      /* Legend — compact horizontal strip pinned top-right on mobile */
+      .map-legend {
+        bottom: auto;
+        top: 10px;
+        right: 10px;
+        left: auto;
+        flex-direction: row;
+        align-items: center;
+        padding: 6px 10px;
+        gap: 10px;
+        border-radius: 20px;
+        background: rgba(10,10,11,.95);
+        border: 1px solid rgba(201,166,91,.15);
+      }
+      /* Hide the "MAP KEY" title label on mobile — no space for it */
+      .map-legend::before { display: none; }
+      .legend-item { font-size: .78rem; gap: 5px; font-weight: 600; }
+      .legend-dot  { width: 12px; height: 12px; border-radius: 3px; }
+
+      .ep { width:100%; min-width:0; height:92vh; top:auto; bottom:0; transform:translateY(100%); border-right:none; border-top:var(--bd); border-radius:22px 22px 0 0 }
+      .ep.open { transform:translateY(0); animation:slideUp .35s cubic-bezier(.32,.72,0,1) }
+      .ep-hd { border-radius:22px 22px 0 0 }
+      .list-grid { grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); padding:14px }
+      .list-filters { padding:9px 14px }
+      .list-hd { padding:14px 16px }
+      .topbar { padding:0 14px; gap:8px }
+      .logo { font-size:1.1rem }
+    }
+
+    @media (min-width: 769px) {
+      .bs  { display:none !important }
+      .bnav { display:none !important }
+    }
+
+    .ep-drag-handle { width:40px; height:4px; background:var(--beige); border-radius:2px; margin:10px auto 5px; flex-shrink:0; display:none; cursor:pointer }
+    @media (max-width: 768px) {
+      .ep-drag-handle { display:block }
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- ── Share Banner ──────────────────────────────────────────────────────── -->
+<div class="share-banner" id="shareBanner">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+  You're viewing a shared read-only dream map.
+</div>
+
+<!-- ── Top Bar ───────────────────────────────────────────────────────────── -->
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-icon-wrap">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--cream)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+    </div>
+    My Dream Map
+  </div>
+  <div class="sep"></div>
+  <a href="index.html" class="icon-btn home-btn" style="text-decoration:none;" title="Home">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    <span class="home-label">HOME</span>
+  </a>
+  <span class="top-sub" id="topSub">Click a country to explore</span>
+  <div class="top-right">
+    <button class="icon-btn" id="listBtn" onclick="openList()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      My List
+    </button>
+    <div class="ed-badge" id="edBadge">
+      <div class="sdot saved" id="sdot"></div>
+      <span id="stext">Editor</span>
+      <button class="ib" onclick="exitEditor()" title="Exit">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Main Layout ───────────────────────────────────────────────────────── -->
+<div class="layout">
+
+  <!-- ── Editor Panel ────────────────────────────────────────────────── -->
+  <aside class="ep" id="ep">
+    <div class="ep-drag-handle" id="epDragHandle"></div>
+    <div class="ep-hd">
+      <div class="ep-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Destination Editor
+      </div>
+      <button class="ep-close" onclick="exitEditor()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="ep-body">
+      <div class="fb-s loading" id="fbS"><div class="spin"></div>Connecting…</div>
+
+      <!-- Selected country -->
+      <div class="ep-cc">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--fg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <div>
+          <span class="ep-clabel">Selected Country</span>
+          <div class="ep-cname" id="epCN"><span class="ep-nosel">Click a country on the map</span></div>
+        </div>
+      </div>
+
+      <!-- Fields -->
+      <div class="ep-fields" id="epF">
+
+        <!-- Status -->
+        <div class="sec-lbl">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Status
+        </div>
+        <div class="status-toggle">
+          <button class="stoggle-btn dream sel" id="btnDream" onclick="setStatus('dream')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Dream
+          </button>
+          <button class="stoggle-btn visited" id="btnVisited" onclick="setStatus('visited')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Visited
+          </button>
+        </div>
+
+        <!-- Photo -->
+        <div class="sec-lbl">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Cover Photo
+        </div>
+        <div class="fl">
+          <div class="uarea" id="uarea" onclick="document.getElementById('pfi').click()">
+            <div style="display:flex;justify-content:center;margin-bottom:4px;color:var(--fg)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+            </div>
+            <div class="utxt">Click or drag to upload<small>Saved to Firebase Storage</small></div>
+            <div class="upbar" id="upbar"><div class="upfill" id="upfill"></div></div>
+          </div>
+          <input type="file" id="pfi" accept="image/*" style="display:none" onchange="handleUpload(this.files[0])">
+          <label class="flabel" style="margin-top:4px">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            Or paste URL
+          </label>
+          <input type="url" class="fi" id="epPU" placeholder="https://..." oninput="onUrlIn()">
+          <img class="img-prev" id="imgPrev" alt="Preview">
+          <button class="img-clr" id="imgClr" onclick="clearPhoto()">Remove photo</button>
+        </div>
+
+        <!-- Dream note -->
+        <div class="sec-lbl">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Dream Note
+        </div>
+        <div class="fl">
+          <label class="flabel">Why you dream of going here</label>
+          <textarea class="fi" id="epQ" placeholder="Write your dream about this place..." maxlength="300" oninput="onNoteIn()"></textarea>
+          <div class="char-counter" id="charC">0 / 300</div>
+        </div>
+
+        <!-- Journal (visible when visited) -->
+        <div class="journal-section" id="journalSec">
+          <div class="sec-lbl">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            Travel Journal
+          </div>
+          <div class="fl">
+            <label class="flabel">Your experience there</label>
+            <textarea class="fi" id="epJ" placeholder="Write about your experience visiting this place..." style="min-height:90px" maxlength="1000"></textarea>
+          </div>
+        </div>
+
+        <!-- Spots -->
+        <div class="sec-lbl">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Spots to Visit
+        </div>
+        <div class="spots-ed" id="spotsEd"></div>
+        <button class="btn btn-g" onclick="addSpotRow()">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add a Spot
+        </button>
+
+
+
+        <button class="btn btn-p" id="saveBtn" onclick="saveDest()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Save to Bucket List
+        </button>
+        <button class="btn btn-d" id="delBtn" onclick="deleteDest()" style="display:none">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+          Remove from List
+        </button>
+
+      </div> 
+
+      <div class="ep-tip" id="epTip">
+        <strong style="display:block;margin-bottom:3px;color:var(--moss)">How to use</strong>
+        Click any country on the map to select it, fill in the details, then save.<br><br>
+        Mark countries as <strong>Dream</strong> (want to go) or <strong>Visited</strong> (been there). Visitors only see the right panel.
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Map ──────────────────────────────────────────────────────────── -->
+  <div class="map-area">
+    <div id="main"></div>
+    <div class="map-hint" id="mapHint">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      Tap a country to explore
+    </div>
+    <!-- First-visit empty state overlay (hidden once a country is tapped or data exists) -->
+    <div class="map-empty-state" id="mapEmptyState">
+      <div class="mes-icon">🌍</div>
+      <div class="mes-title">Start your dream map</div>
+      <div class="mes-sub">Tap any country to mark it as a dream destination or a place you've visited</div>
+      <div class="mes-arrow">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--fg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+      </div>
+    </div>
+    <!-- Dim backdrop behind bottom sheet -->
+    <div id="map-backdrop" class="map-backdrop"></div>
+    <div class="map-legend" id="mapLegend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--map-dream)"></div>Dream</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--map-visited)"></div>Visited</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--map-default)"></div>Unexplored</div>
+    </div>
+  </div>
+
+  <!-- ── Viewer Panel (desktop) ───────────────────────────────────────── -->
+  <aside class="vp" id="vp">
+    <div class="vp-hd">
+      <div class="vp-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--fg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Dream Destination
+      </div>
+      <div class="vp-hint">Select a country on the map</div>
+    </div>
+    <div class="vp-loader" id="vpLoad"><div class="spin"></div>Loading…</div>
+    <div class="vp-empty" id="vpEmpty">
+      <div class="vp-ei">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--fg)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </div>
+      <h3>Where will you go?</h3>
+      <p>Click a country to see your dream destinations and visited places.</p>
+    </div>
+    <div class="vp-content" id="vpContent">
+      <img class="vp-hero" id="vpHero" src="" alt="">
+      <div class="vp-heroph" id="vpHeroPh">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--fg)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity=".4"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </div>
+      <div class="vp-info" id="vpInfo"></div>
+    </div>
+    <div class="vp-na" id="vpNA">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--txt2)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Not yet added to the dream list.
+    </div>
+    <div class="vp-ft">
+      <span class="vp-count">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <span id="vpCT">0 dream places</span>
+      </span>
+      <button class="btn-g btn" style="width:auto;margin:0;font-size:.72rem" onclick="openList()">View all</button>
+    </div>
+  </aside>
+
+</div>
+
+<!-- ── Mobile Bottom Sheet (viewer) ─────────────────────────────────────── -->
+<div class="bs" id="bs">
+  <div class="bs-drag-row">
+    <div class="bs-handle" onclick="closeBS()"></div>
+    <button class="bs-close" onclick="closeBS()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <!-- Preview header: name + pill shown before user scrolls in -->
+  <div class="bs-preview" id="bsPreview"></div>
+  <div class="bs-inner" id="bsInner"></div>
+</div>
+
+<!-- ── Mobile Bottom Nav ─────────────────────────────────────────────────── -->
+<nav class="bnav" id="bnav">
+  <button class="bnav-btn active" id="bnavMap" onclick="mobileTab('map')">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+    Map
+  </button>
+  <button class="bnav-btn" id="bnavList" onclick="openList()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+    My List
+  </button>
+  <button class="bnav-btn" id="bnavShare" onclick="copyShareLink()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    Share
+  </button>
+  <button class="bnav-btn fab" id="bnavEdit" onclick="mobileEditTap()" style="display:none">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+  </button>
+</nav>
+
+<!-- ── Bucket List Overlay ────────────────────────────────────────────────── -->
+<div class="list-overlay" id="listOv">
+  <div class="list-hd">
+    <div>
+      <div class="list-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--fg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        My Bucket List
+      </div>
+      <div class="list-stats" id="listStats"></div>
+    </div>
+    <button class="ep-close" onclick="closeList()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="list-filters">
+    <button class="filter-btn active" data-f="all" onclick="setFilter('all',this)">All</button>
+    <button class="filter-btn" data-f="dream" onclick="setFilter('dream',this)">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="display:inline-block;vertical-align:middle;margin-right:3px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Dream
+    </button>
+    <button class="filter-btn" data-f="visited" onclick="setFilter('visited',this)">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="display:inline-block;vertical-align:middle;margin-right:3px"><polyline points="20 6 9 17 4 12"/></svg>
+      Visited
+    </button>
+    <input class="list-search" id="listSearch" type="text" placeholder="Search countries…" oninput="renderList()">
+  </div>
+  <div class="list-grid" id="listGrid"></div>
+</div>
+
+<!-- ── Lock Overlay ──────────────────────────────────────────────────────── -->
+<div class="lock-ov" id="lockOv">
+  <div class="lock-card">
+    <div class="lock-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--fg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    </div>
+    <h2 class="lock-title">Editor Access</h2>
+    <p class="lock-sub">Enter the secret key to open the destination editor.</p>
+    <input type="password" class="lock-inp" id="lockInp" placeholder="• • •" maxlength="20"
+      onkeydown="if(event.key==='Enter')checkLock();if(event.key==='Escape')closeLock()">
+    <button class="btn btn-p" onclick="checkLock()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      Unlock
+    </button>
+    <br><button class="lock-cancel" onclick="closeLock()">Cancel</button>
+  </div>
+</div>
+
+<!-- ── Toast ─────────────────────────────────────────────────────────────── -->
+<div id="toast">
+  <svg id="tIcon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="tMsg"></span>
+</div>
+
+ 
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="js/firebase.js"></script>
+
+<script>
+const dreamRef = db.collection('dreammap');
+
+// ── State ───────────────────────────────────────────────────────────────────
+const SECRET    = 'LUV';
+let isEditor    = false;
+let isShare     = new URLSearchParams(location.search).has('share');
+let current     = null;
+let cache       = {};          
+let curStatus   = 'dream';
+let curPhoto    = '';
+let keyBuf      = '';
+let keyTimer    = null;
+
+let listFilter  = 'all';
+let unsubscribe = null;       
+ 
+function startRealtime() {
+  unsubscribe = dreamRef.onSnapshot(snap => {
+    cache = {};
+    snap.docs.forEach(d => { cache[d.id] = d.data(); });
+    console.log('Data Loaded: dreammap', snap.docs.length);
+    refreshColors();
+    updateCount();
+    if (snap.docs.length > 0) document.getElementById('mapEmptyState')?.classList.add('hidden');
+    setFbStatus('ok', `Connected — ${snap.docs.length} destinations`);
+    if (current) {
+      isMobile() ? renderBS(current) : renderViewer(current);
+    }
+  }, err => {
+    console.error(err);
+    setFbStatus('err', 'Firebase error');
+    toast('Firebase connection error', true);
+  });
+}
+
+async function uploadPhoto(file) {
+  const path = `dreammap/${Date.now()}_${file.name}`;
+  const ref  = storage.ref(path);
+  const task = ref.put(file);
+  return new Promise((resolve, reject) => {
+    task.on('state_changed',
+      snap => showProgress((snap.bytesTransferred / snap.totalBytes) * 100),
+      reject,
+      async () => { resolve(await task.snapshot.ref.getDownloadURL()); }
+    );
+  });
+}
+
+async function saveToFirestore(name, data) {
+  await dreamRef.doc(name).set({ ...data, updatedAt: new Date().toISOString() });
+  console.log('Data Saved: dreammap', name);
+}
+
+async function deleteFromFirestore(name) {
+  await dreamRef.doc(name).delete();
+  console.log('Data Saved: dreammap deleted', name);
+}
+
+ 
+document.addEventListener('keydown', e => {
+  if (isShare) return;
+  if (['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) return;
+  const k = e.key.length === 1 ? e.key.toUpperCase() : '';
+  if (!k) return;
+  keyBuf += k;
+  clearTimeout(keyTimer);
+  keyTimer = setTimeout(() => { keyBuf = ''; }, 3000);
+  if (keyBuf.endsWith(SECRET)) { keyBuf = ''; if (!isEditor) showLock(); }
+});
+
+// ── Lock (Firebase Auth) ─────────────────────────────────────────────────────
+function showLock() {
+  const ov = document.getElementById('lockOv');
+  ov.classList.add('vis');
+  // Swap lock card contents to a login form
+  ov.querySelector('.lock-card').innerHTML = `
+    <div class="lock-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--fg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    </div>
+    <h2 class="lock-title">Editor Access</h2>
+    <p class="lock-sub">Sign in to unlock the destination editor.</p>
+    <div id="lockErr" style="display:none;background:rgba(214,69,69,.08);color:#D64545;border:1px solid rgba(214,69,69,.25);border-radius:0;padding:6px 10px;font-size:.78rem;margin-bottom:8px;text-align:left;"></div>
+    <input type="email" id="lockEmail" class="lock-inp" placeholder="email" style="letter-spacing:normal;margin-bottom:7px"
+      onkeydown="if(event.key==='Enter')doLockLogin();if(event.key==='Escape')closeLock()">
+    <input type="password" id="lockPass" class="lock-inp" placeholder="password"
+      onkeydown="if(event.key==='Enter')doLockLogin();if(event.key==='Escape')closeLock()">
+    <button class="btn btn-p" style="margin-top:10px" onclick="doLockLogin()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      Sign In
+    </button>
+    <br><button class="lock-cancel" onclick="closeLock()">Cancel</button>
+  `;
+  setTimeout(() => document.getElementById('lockEmail')?.focus(), 80);
+}
+
+function closeLock() {
+  document.getElementById('lockOv').classList.remove('vis');
+}
+
+async function doLockLogin() {
+  const email = document.getElementById('lockEmail')?.value.trim();
+  const pass  = document.getElementById('lockPass')?.value;
+  const errEl = document.getElementById('lockErr');
+  if (!email || !pass) { errEl.textContent = 'Enter your email and password.'; errEl.style.display = 'block'; return; }
+  errEl.style.display = 'none';
+  try {
+    await firebase.auth().signInWithEmailAndPassword(email, pass);
+    closeLock();
+    enterEditor();
+  } catch (err) {
+    const msgs = {
+      'auth/user-not-found':  'No account found.',
+      'auth/wrong-password':  'Incorrect password.',
+      'auth/invalid-email':   'Invalid email.',
+      'auth/too-many-requests': 'Too many attempts. Try again later.',
+    };
+    errEl.textContent = msgs[err.code] || 'Sign in failed.';
+    errEl.style.display = 'block';
+  }
+}
+
+// ── Editor mode ─────────────────────────────────────────────────────────────
+function enterEditor() {
+  isEditor = true;
+  document.getElementById('ep').classList.add('open');
+  document.getElementById('edBadge').classList.add('visible');
+  document.getElementById('bnavEdit').style.display = 'flex';
+  if (current) loadEditorFields(current);
+  toast('Editor mode unlocked');
+}
+function exitEditor() {
+  isEditor = false;
+  document.getElementById('ep').classList.remove('open');
+  document.getElementById('edBadge').classList.remove('visible');
+  document.getElementById('bnavEdit').style.display = 'none';
+  toast('Exited editor mode');
+}
+function mobileEditTap() {
+  if (isEditor) {
+    document.getElementById('ep').classList.toggle('open');
+  }
+}
+
+// ── ECharts Map ──────────────────────────────────────────────────────────────
+const chart = echarts.init(document.getElementById('main'));
+
+fetch('https://s3-us-west-2.amazonaws.com/s.cdpn.io/95368/world.json')
+  .then(r => r.json())
+  .then(json => {
+    echarts.registerMap('world', json);
+    const isMob = window.innerWidth <= 768;
+    chart.setOption({
+      backgroundColor: '#0F0F10',
+      series: [{
+        type: 'map', map: 'world', roam: true,
+        // Zoom in more on mobile so countries are actually visible
+        zoom: isMob ? 1.8 : 1.2,
+        // On mobile, centre on a more balanced lat/lng
+        center: isMob ? [15, 20] : undefined,
+        scaleLimit: { min: isMob ? 1.0 : 0.6, max: 12 },
+        label: { show: false },
+        emphasis: {
+          label: { show: true, color: '#1a2e1a', fontWeight: 'bold', fontSize: isMob ? 13 : 11 },
+          itemStyle: { areaColor: '#C9A65B', borderColor: '#8B6914', borderWidth: 1.5, shadowColor: 'rgba(201,166,91,.3)', shadowBlur: 8 }
+        },
+        select: {
+          label: { show: true, color: '#fff', fontSize: isMob ? 13 : 11, fontWeight: 'bold' },
+          itemStyle: { areaColor: '#D64545', borderColor: '#8B1A1A', borderWidth: 2 }
+        },
+        selectedMode: 'single',
+        // Stronger country fill + borders so they read clearly on mobile
+        itemStyle: { areaColor: '#1E1E22', borderColor: 'rgba(201,166,91,.2)', borderWidth: 0.8 }
+      }]
+    });
+    chart.on('click', p => { if (p.componentType === 'series') selectCountry(p.name); });
+  });
+
+window.addEventListener('resize', () => chart.resize());
+
+// ── Color bucket-list countries on map ───────────────────────────────────────
+function refreshColors() {
+  const data = Object.entries(cache).map(([name, d]) => ({
+    name,
+    value: d.status === 'visited' ? 2 : 1,
+    itemStyle: {
+      areaColor: d.status === 'visited' ? '#D64545' : '#C9A65B',
+      borderColor: d.status === 'visited' ? '#8B1A1A' : '#8B6914',
+    }
+  }));
+  chart.setOption({ series: [{ data }] });
+}
+
+// ── Country selection ────────────────────────────────────────────────────────
+function selectCountry(name) {
+  current = name;
+  document.getElementById('mapHint').classList.add('hidden');
+  document.getElementById('mapEmptyState').classList.add('hidden');
+
+  // Brief pulse glow to confirm the tap registered
+  chart.dispatchAction({ type: 'highlight', seriesIndex: 0, name });
+  setTimeout(() => chart.dispatchAction({ type: 'downplay', seriesIndex: 0, name }), 320);
+
+  if (isMobile()) {
+    renderBS(name);
+    openBS();
+    showBackdrop();
+  } else {
+    renderViewer(name);
+  }
+
+  if (isEditor) loadEditorFields(name);
+}
+
+// ── Viewer (desktop) ─────────────────────────────────────────────────────────
+function renderViewer(name) {
+  const dest = cache[name];
+  document.getElementById('vpEmpty').classList.add('hidden');
+  document.getElementById('vpLoad').classList.remove('vis');
+  const vc = document.getElementById('vpContent');
+  vc.classList.add('vis');
+
+  const hero = document.getElementById('vpHero');
+  const heroPh = document.getElementById('vpHeroPh');
+  if (dest?.photo) {
+    hero.src = dest.photo; hero.classList.add('vis');
+    heroPh.style.display = 'none';
+  } else {
+    hero.classList.remove('vis'); heroPh.style.display = 'flex';
+  }
+
+  document.getElementById('vpNA').style.display = dest ? 'none' : 'flex';
+  document.getElementById('vpInfo').innerHTML = buildInfoHTML(name, dest);
+  updateCount();
+}
+
+// ── Mobile bottom sheet ──────────────────────────────────────────────────────
+function renderBS(name) {
+  const dest = cache[name];
+  const inner = document.getElementById('bsInner');
+  // Populate the preview header in the drag handle area
+  const preview = document.getElementById('bsPreview');
+  if (preview) {
+    const pill = dest
+      ? (dest.status === 'visited'
+          ? `<span class="status-pill pill-visited" style="font-size:.7rem">${checkSVG()} Visited</span>`
+          : `<span class="status-pill pill-dream"   style="font-size:.7rem">${starSVG()} Dream</span>`)
+      : '';
+    preview.innerHTML = `<span class="bs-preview-name">${esc(displayName(name))}</span>${pill}`;
+  }
+  let html = '';
+
+  if (dest?.photo) {
+    html += `<img src="${esc(dest.photo)}" style="width:100%;height:180px;object-fit:cover;display:block;border-bottom:var(--bd)" onerror="this.style.display='none'">`;
+  }
+
+  if (!dest) {
+    html += `<div style="padding:20px 16px">
+      <div class="vp-cn">${pinSVG(18)} ${esc(displayName(name))}</div>
+      <div class="vp-na" style="display:flex;margin:10px 0 0">${infoSVG()} Not yet added to the dream list.</div>
+    </div>`;
+  } else {
+    html += `<div style="padding:14px 16px;display:flex;flex-direction:column;gap:10px">
+      ${buildInfoHTML(name, dest)}
+    </div>`;
+  }
+
+  inner.innerHTML = html;
+  updateCount();
+}
+
+function buildInfoHTML(name, dest) {
+  if (!dest) return `<div class="vp-cn">${pinSVG(18)} ${esc(name)}</div>`;
+
+  const pill = dest.status === 'visited'
+    ? `<span class="status-pill pill-visited">${checkSVG()} Visited</span>`
+    : `<span class="status-pill pill-dream">${starSVG()} Dream</span>`;
+
+  let html = `<div class="vp-cn">${pinSVG(18)} ${esc(displayName(name))} ${pill}</div>`;
+
+  if (dest.quote) html += `<div class="vp-quote">${esc(dest.quote)}</div>`;
+
+  if (dest.status === 'visited' && dest.journal) {
+    html += `<div>
+      <div class="vp-slbl">Travel Journal</div>
+      <div class="vp-journal">${esc(dest.journal)}</div>
+    </div>`;
+  }
+
+  const spots = (dest.spots || []).filter(s => s.name);
+  if (spots.length) {
+    html += `<div><div class="vp-slbl">Spots to ${dest.status === 'visited' ? 'Remember' : 'Visit'}</div><div class="vp-spots">`;
+    spots.forEach(s => {
+      html += `<div class="vp-spot">
+        <div class="vp-si">${pinSVG(12)}</div>
+        <div><div class="vp-sn">${esc(s.name)}</div>${s.desc ? `<p class="vp-sd">${esc(s.desc)}</p>` : ''}</div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+  return html;
+}
+
+function openBS()  { document.getElementById('bs').classList.add('open'); }
+function closeBS() { document.getElementById('bs').classList.remove('open'); hideBackdrop(); }
+function showBackdrop() { document.getElementById('map-backdrop').classList.add('vis'); }
+function hideBackdrop() { document.getElementById('map-backdrop').classList.remove('vis'); }
+
+// ── List Overlay ─────────────────────────────────────────────────────────────
+function openList()  { document.getElementById('listOv').classList.add('vis'); renderList(); }
+function closeList() { document.getElementById('listOv').classList.remove('vis'); }
+
+function setFilter(f, btn) {
+  listFilter = f;
+  document.querySelectorAll('.filter-btn[data-f]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderList();
+}
+
+function renderList() {
+  const q = document.getElementById('listSearch').value.toLowerCase();
+  const grid = document.getElementById('listGrid');
+  // Update stats summary
+  const statsEl = document.getElementById('listStats');
+  if (statsEl) {
+    const total   = Object.keys(cache).length;
+    const dreams  = Object.values(cache).filter(d => d.status !== 'visited').length;
+    const visited = Object.values(cache).filter(d => d.status === 'visited').length;
+    statsEl.textContent = total
+      ? `${total} place${total!==1?'s':''} · ${dreams} dream${dreams!==1?'s':''} · ${visited} visited`
+      : 'No places added yet';
+  }
+  const entries = Object.entries(cache)
+    .filter(([name, d]) => {
+      const matchF = listFilter === 'all' || d.status === listFilter || (!d.status && listFilter === 'dream');
+      const matchQ = name.toLowerCase().includes(q);
+      return matchF && matchQ;
+    })
+    .sort(([a],[b]) => a.localeCompare(b));
+
+  if (!entries.length) {
+    grid.innerHTML = `<div class="list-empty"><div>
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--fg)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity=".4">
+        <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+    </div>No places found.</div>`;
+    return;
+  }
+
+  grid.innerHTML = entries.map(([name, d]) => {
+    const isVisited = d.status === 'visited';
+    const pill = isVisited
+      ? `<span class="status-pill pill-visited" style="font-size:.62rem">${checkSVG()} Visited</span>`
+      : `<span class="status-pill pill-dream" style="font-size:.62rem">${starSVG()} Dream</span>`;
+    const spotsN = (d.spots||[]).filter(s=>s.name).length;
+    return `<div class="list-card" onclick="listCardClick('${esc(name)}')">
+      ${d.photo
+        ? `<img class="list-card-img" src="${esc(d.photo)}" alt="${esc(name)}" loading="lazy" onerror="this.className='list-card-img ph';">`
+        : `<div class="list-card-img ph list-card-letter" style="background:${letterBg(name)}">
+            <span class="list-card-initial">${displayName(name).charAt(0).toUpperCase()}</span>
+          </div>`}
+      <div class="list-card-body">
+        <div class="list-card-name">${esc(displayName(name))}</div>
+        <div class="list-card-meta">${pill}${spotsN ? `<span>· ${spotsN} spot${spotsN!==1?'s':''}</span>` : ''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function listCardClick(name) {
+  closeList();
+  // Select on map
+  chart.dispatchAction({ type: 'mapSelect', name });
+  current = name;
+  if (isMobile()) { renderBS(name); openBS(); }
+  else { renderViewer(name); }
+  if (isEditor) loadEditorFields(name);
+}
+
+// ── Editor fields ────────────────────────────────────────────────────────────
+function loadEditorFields(name) {
+  document.getElementById('epCN').textContent = displayName(name);
+  const f = document.getElementById('epF');
+  f.style.display = 'flex';
+  document.getElementById('epTip').style.display = 'none';
+
+  const dest = cache[name];
+  curStatus = dest?.status || 'dream';
+  curPhoto  = dest?.photo  || '';
+
+  setStatus(curStatus);
+  document.getElementById('epPU').value = curPhoto;
+  applyPreview(curPhoto);
+  document.getElementById('epQ').value = dest?.quote || '';
+  document.getElementById('epJ').value = dest?.journal || '';
+  updateCharCount();
+  renderSpotRows(dest?.spots || []);
+  document.getElementById('delBtn').style.display = dest ? 'flex' : 'none';
+}
+
+function setStatus(s) {
+  curStatus = s;
+  document.getElementById('btnDream').classList.toggle('sel', s === 'dream');
+  document.getElementById('btnVisited').classList.toggle('sel', s === 'visited');
+  document.getElementById('journalSec').classList.toggle('vis', s === 'visited');
+}
+
+ 
+let dragSrc = null;
+
+function renderSpotRows(spots) {
+  const c = document.getElementById('spotsEd');
+  c.innerHTML = '';
+  if (spots.length) spots.forEach(s => addSpotRow(s));
+  else addSpotRow();
+}
+
+function addSpotRow(spot = {}) {
+  const c = document.getElementById('spotsEd');
+  const row = document.createElement('div');
+  row.className = 'spot-row';
+  row.draggable = true;
+  row.innerHTML = `
+    <div class="spot-drag-handle" title="Drag to reorder">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg>
+    </div>
+    <div class="spot-inputs">
+      <input type="text" placeholder="Spot name..." value="${esc(spot.name||'')}">
+      <input type="text" placeholder="Short description..." value="${esc(spot.desc||'')}">
+    </div>
+    <button class="spot-del" title="Remove">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>`;
+
+  row.querySelector('.spot-del').onclick = () => { row.remove(); };
+  row.querySelectorAll('input').forEach(inp => inp.addEventListener('input', () => {}));
+
+ 
+  row.addEventListener('dragstart', e => { dragSrc = row; row.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+  row.addEventListener('dragend', () => { row.classList.remove('dragging'); c.querySelectorAll('.spot-row').forEach(r => r.classList.remove('dragover-spot')); dragSrc = null; });
+  row.addEventListener('dragover', e => { e.preventDefault(); if (dragSrc && dragSrc !== row) { c.querySelectorAll('.spot-row').forEach(r => r.classList.remove('dragover-spot')); row.classList.add('dragover-spot'); } });
+  row.addEventListener('drop', e => {
+    e.preventDefault();
+    if (dragSrc && dragSrc !== row) {
+      const items = [...c.querySelectorAll('.spot-row')];
+      const si = items.indexOf(dragSrc), ti = items.indexOf(row);
+      c.insertBefore(dragSrc, si < ti ? row.nextElementSibling : row);
+    }
+    c.querySelectorAll('.spot-row').forEach(r => r.classList.remove('dragover-spot'));
+  });
+
+  c.appendChild(row);
+}
+
+function gatherSpots() {
+  return [...document.querySelectorAll('#spotsEd .spot-row')].map(r => {
+    const i = r.querySelectorAll('input');
+    return { name: i[0].value.trim(), desc: i[1].value.trim() };
+  }).filter(s => s.name);
+}
+
+
+
+// ── Photo ─────────────────────────────────────────────────────────────────────
+async function handleUpload(file) {
+  if (!file) return;
+  document.getElementById('uarea').classList.add('uploading');
+  showProgress(0);
+  try {
+    const url = await uploadPhoto(file);
+    curPhoto = url;
+    document.getElementById('epPU').value = url;
+    applyPreview(url);
+    toast('Photo uploaded to Firebase Storage');
+  } catch (e) {
+    toast('Upload failed: ' + e.message, true);
+  } finally {
+    document.getElementById('uarea').classList.remove('uploading');
+    hideProgress();
+  }
+}
+
+function onUrlIn() {
+  curPhoto = document.getElementById('epPU').value.trim();
+  applyPreview(curPhoto);
+}
+
+function applyPreview(url) {
+  const p = document.getElementById('imgPrev'), c = document.getElementById('imgClr');
+  if (url) { p.src = url; p.classList.add('vis'); p.onerror = () => p.classList.remove('vis'); c.classList.add('vis'); }
+  else { p.classList.remove('vis'); c.classList.remove('vis'); }
+}
+
+function clearPhoto() { curPhoto = ''; document.getElementById('epPU').value = ''; applyPreview(''); }
+
+function showProgress(p) { document.getElementById('upbar').classList.add('vis'); document.getElementById('upfill').style.width = p+'%'; }
+function hideProgress()  { document.getElementById('upbar').classList.remove('vis'); document.getElementById('upfill').style.width = '0%'; }
+
+// ── Character counter ─────────────────────────────────────────────────────────
+function onNoteIn() { updateCharCount(); }
+function updateCharCount() {
+  const n = document.getElementById('epQ').value.length;
+  const el = document.getElementById('charC');
+  el.textContent = `${n} / 300`;
+  el.className = 'char-counter' + (n >= 300 ? ' over' : n >= 240 ? ' warn' : '');
+}
+
+// ── Save & Delete ─────────────────────────────────────────────────────────────
+async function saveDest(silent = false) {
+  if (!current) { if (!silent) toast('Select a country first', true); return; }
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true;
+  setSaving(true);
+
+  const dest = {
+    status:  curStatus,
+    quote:   document.getElementById('epQ').value.trim(),
+    journal: document.getElementById('epJ').value.trim(),
+    spots:   gatherSpots(),
+  };
+  if (curPhoto) dest.photo = curPhoto;
+
+  try {
+    await saveToFirestore(current, dest);
+    setSaving(false);
+    document.getElementById('delBtn').style.display = 'flex';
+    if (!silent) toast(`${current} saved to Firebase`);
+  } catch (e) {
+    setSaving(false);
+    toast('Save failed: ' + e.message, true);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function deleteDest() {
+  if (!current || !confirm(`Remove ${current} from your dream list?`)) return;
+  setSaving(true);
+  try {
+    await deleteFromFirestore(current);
+    setSaving(false);
+    document.getElementById('delBtn').style.display = 'none';
+    document.getElementById('epF').style.display = 'none';
+    document.getElementById('epTip').style.display = '';
+    document.getElementById('epCN').innerHTML = '<span class="ep-nosel">Click a country on the map</span>';
+    current = null;
+    toast('Removed from list');
+  } catch (e) {
+    setSaving(false);
+    toast('Delete failed: ' + e.message, true);
+  }
+}
+
+// ── Share link ────────────────────────────────────────────────────────────────
+function copyShareLink() {
+  const url = location.origin + location.pathname + '?share';
+  navigator.clipboard.writeText(url).then(() => toast('Share link copied!')).catch(() => {
+    prompt('Copy this link:', url);
+  });
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function setSaving(s) {
+  document.getElementById('sdot').className = 'sdot ' + (s ? 'saving' : 'saved');
+  document.getElementById('stext').textContent = s ? 'Saving…' : 'Saved';
+}
+
+function setFbStatus(type, msg) {
+  const el = document.getElementById('fbS');
+  el.className = 'fb-s ' + type;
+  const icons = {
+    ok:      `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+    err:     `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+    loading: `<div class="spin"></div>`
+  };
+  el.innerHTML = (icons[type] || '') + ' ' + msg;
+}
+
+function updateCount() {
+  const n = Object.keys(cache).length;
+  document.getElementById('vpCT').textContent = `${n} dream place${n!==1?'s':''}`;
+}
+
+function isMobile() { return window.innerWidth <= 768; }
+
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// Normalise long country names to short display labels
+const NAME_SHORT = {
+  'United States of America': 'USA',
+  'United Kingdom':           'UK',
+  'United Arab Emirates':     'UAE',
+  'Dominican Republic':       'Dom. Republic',
+  'Democratic Republic of the Congo': 'DR Congo',
+  'Central African Republic': 'CAR',
+  'Bosnia and Herzegovina':   'Bosnia & Herz.',
+  'Trinidad and Tobago':      'Trinidad',
+  'Papua New Guinea':         'Papua NG',
+  'New Zealand':              'New Zealand',
+};
+function displayName(name) { return NAME_SHORT[name] || name; }
+
+// Deterministic pastel background from country name
+function letterBg(name) {
+  const palettes = [
+    'linear-gradient(135deg,#b8d8c8,#8fbcac)',
+    'linear-gradient(135deg,#c8d4e8,#94a8cc)',
+    'linear-gradient(135deg,#e8d4b8,#c8a878)',
+    'linear-gradient(135deg,#d4c8e8,#a890cc)',
+    'linear-gradient(135deg,#c8e8d4,#88c4a0)',
+    'linear-gradient(135deg,#e8c8c8,#cc9090)',
+    'linear-gradient(135deg,#e8e4b8,#c8c078)',
+  ];
+  let h = 0; for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xffff;
+  return palettes[h % palettes.length];
+}
+
+function pinSVG(sz) { return `<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="var(--fg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`; }
+function starSVG()   { return `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`; }
+function checkSVG()  { return `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>`; }
+function infoSVG()   { return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--txt2)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`; }
+
+let toastT;
+function toast(msg, isErr = false) {
+  const t = document.getElementById('toast');
+  const ic = document.getElementById('tIcon');
+  document.getElementById('tMsg').textContent = msg;
+  t.classList.toggle('err', isErr);
+  ic.innerHTML = isErr
+    ? '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>'
+    : '<polyline points="20 6 9 17 4 12"/>';
+  t.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+function mobileTab(t) {
+  document.querySelectorAll('.bnav-btn:not(.fab)').forEach(b => b.classList.remove('active'));
+  document.getElementById('bnav' + t.charAt(0).toUpperCase() + t.slice(1))?.classList.add('active');
+}
+
+// ── Mobile swipe to close bottom sheet ───────────────────────────────────────
+(function() {
+  const bs = document.getElementById('bs');
+  let startY = 0;
+  bs.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+  bs.addEventListener('touchmove', e => {
+    const dy = e.touches[0].clientY - startY;
+    if (dy > 60) closeBS();
+  }, { passive: true });
+
+  // Tap the dim backdrop behind the sheet to close it
+  document.getElementById('map-backdrop').addEventListener('click', () => {
+    if (bs.classList.contains('open')) closeBS();
+  });
+})();
+
+// ── Upload drag events ────────────────────────────────────────────────────────
+const uarea = document.getElementById('uarea');
+uarea.addEventListener('dragover', e => { e.preventDefault(); uarea.classList.add('dragover'); });
+uarea.addEventListener('dragleave', () => uarea.classList.remove('dragover'));
+uarea.addEventListener('drop', e => {
+  e.preventDefault(); uarea.classList.remove('dragover');
+  const f = e.dataTransfer.files[0];
+  if (f?.type.startsWith('image/')) handleUpload(f);
+});
+
+// ── Map hint click ────────────────────────────────────────────────────────────
+document.getElementById('main').addEventListener('click', () => {
+  document.getElementById('mapHint').classList.add('hidden');
+});
+
+// ── Share mode ────────────────────────────────────────────────────────────────
+if (isShare) {
+  document.getElementById('shareBanner').classList.add('visible');
+  document.getElementById('listBtn').style.display = '';
+}
+
+// ── Top bar share button (desktop) ───────────────────────────────────────────
+const shareBtn = document.createElement('button');
+shareBtn.className = 'icon-btn';
+shareBtn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> Share`;
+shareBtn.onclick = copyShareLink;
+document.getElementById('listBtn').after(shareBtn);
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+startRealtime();
+</script>
+</body>
+</html>

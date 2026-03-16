@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beats — LINESBYLIN</title>
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cinzel+Decorative:wght@400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/beats.css">
+  <link rel="stylesheet" href="css/page-enhancements.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/tsushima-theme.css">
+</head>
+<body data-mediahub="beats">
+
+<nav class="nav">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">LINESBYLIN</a>
+    <ul class="nav-menu" id="nav-menu">
+      <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+      <li class="nav-item"><a href="index.html#about" class="nav-link">About</a></li>
+      <li class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle">Work</a>
+        <div class="dropdown-menu">
+          <a href="blog.html" class="dropdown-item">Blog</a>
+          <a href="poems.html" class="dropdown-item">Poems</a>
+          <a href="stories.html" class="dropdown-item">Stories</a>
+          <a href="biography.html" class="dropdown-item">Biography</a>
+          <a href="code.html" class="dropdown-item">Code</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle">MediaHub</a>
+        <div class="dropdown-menu">
+          <a href="beats.html" class="dropdown-item">Beats</a>
+          <a href="movies.html" class="dropdown-item">Movies</a>
+          <a href="tvshows.html" class="dropdown-item">Shows</a>
+        </div>
+      </li>
+      <li class="nav-item"><a href="dream-map.html" class="nav-link">Dreams</a></li>
+      <li class="nav-item"><a href="index.html#contact" class="nav-link">Contact</a></li>
+    </ul>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="page-header-content">
+    <h1>Beats</h1>
+    <p>Original music and tracks — straight from the DAW.</p>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div class="search-wrap" style="position:relative;"><img src="assets/icons/search.svg" alt="" style="position:absolute;left:4px;top:50%;transform:translateY(-50%);width:14px;height:14px;opacity:.45;pointer-events:none;z-index:1;">
+      <input type="text" id="search-input" class="search-input" style="padding-left:22px;" placeholder="Search beats, artists, genres...">
+    </div>
+    <div id="mediahub-grid">
+      <div class="beats-loading">
+        <div class="beats-loading-spinner"></div>
+        <p>Loading beats...</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-content">
+    <span class="footer-logo">LINESBYLIN</span>
+    <div class="footer-links">
+      <a href="mediahub.html">MediaHub</a>
+      <a href="movies.html">Movies</a>
+      <a href="tvshows.html">TV Shows</a>
+    </div>
+  </div>
+</footer>
+
+<div class="progress-wrap" id="progressWrap"><span class="progress-icon-text">&#8593;</span></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+<script src="js/firebase.js"></script>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel">
+const { useState, useRef, useEffect } = React;
+
+function fmtTime(s) {
+  if (!s || isNaN(s)) return '0:00';
+  const m   = Math.floor(s / 60);
+  const sec = Math.floor(s % 60).toString().padStart(2, '0');
+  return `${m}:${sec}`;
+}
+
+// ─── Play/Pause SVG Button ──────────────────────────────────────────
+function PlayPauseBtn({ isPlaying, onClick }) {
+  return (
+    <button
+      className="play-pause-btn"
+      type="button"
+      aria-label={isPlaying ? 'Pause' : 'Play'}
+      data-playing={isPlaying}
+      onClick={onClick}
+    >
+      <svg
+        viewBox="0 0 100 100"
+        width="54"
+        height="54"
+        aria-hidden="true"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="7"
+      >
+        <circle cx="50" cy="50" r="46" opacity="0.15" />
+        <line className="pp-line1" x1="42" y1="30" x2="42" y2="70" />
+        <line className="pp-line2" x1="42" y1="70" x2="70" y2="50" />
+        <line className="pp-line3" x1="70" y1="50" x2="42" y2="30" />
+        <circle className="pp-ring1" cx="50" cy="50" r="46" />
+        <path
+          className="pp-ring2"
+          strokeDasharray="55 365"
+          strokeDashoffset="55"
+          d="M 41.996 4.631 C 41.996 4.631 47.464 3.48 52.3 7.107 C 58.062 11.43 58 18 58 18 L 58 70"
+        />
+        <path
+          className="pp-ring3"
+          strokeDasharray="40 365"
+          strokeDashoffset="40"
+          d="M 41.996 4.631 C 41.996 4.631 47.464 3.48 52.3 7.107 C 58.062 11.43 58 18 58 18 L 58 76"
+          transform="scale(1, -1)"
+        />
+      </svg>
+    </button>
+  );
+}
+
+// ─── Seek / Progress Bar ──────────────────────────────────────────────────────
+function ProgressBar({ progress, duration, currentTime, onSeek }) {
+  const trackRef = useRef(null);
+
+  function handleClick(e) {
+    if (!trackRef.current || !duration) return;
+    const rect = trackRef.current.getBoundingClientRect();
+    const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    onSeek(pct * duration);
+  }
+
+  const pct = (progress * 100).toFixed(2) + '%';
+
+  return (
+    <div className="beat-progress-area">
+      <span className="beat-time">{fmtTime(currentTime)}</span>
+      <div className="beat-progress-track" ref={trackRef} onClick={handleClick}>
+        <div className="beat-progress-fill" style={{ width: pct }} />
+        <div className="beat-progress-thumb" style={{ left: pct }} />
+      </div>
+      <span className="beat-time">{fmtTime(duration)}</span>
+    </div>
+  );
+}
+
+// ─── Single Beat Card ─────────────────────────────────────────────────────────
+function BeatCard({ item, activeId, onActivate, index }) {
+  const [isPlaying,   setIsPlaying]   = useState(false);
+  const [progress,    setProgress]    = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration,    setDuration]    = useState(0);
+  const [volume,      setVolume]      = useState(0.85);
+  const audioRef = useRef(null);
+
+  useEffect(() => {
+    if (activeId !== item.id && isPlaying) {
+      audioRef.current?.pause();
+      setIsPlaying(false);
+    }
+  }, [activeId]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const onTime  = () => {
+      setCurrentTime(audio.currentTime);
+      setProgress(audio.duration ? audio.currentTime / audio.duration : 0);
+    };
+    const onLoad  = () => setDuration(audio.duration);
+    const onEnded = () => {
+      setIsPlaying(false);
+      setProgress(0);
+      setCurrentTime(0);
+    };
+
+    audio.addEventListener('timeupdate',     onTime);
+    audio.addEventListener('loadedmetadata', onLoad);
+    audio.addEventListener('ended',          onEnded);
+    return () => {
+      audio.removeEventListener('timeupdate',     onTime);
+      audio.removeEventListener('loadedmetadata', onLoad);
+      audio.removeEventListener('ended',          onEnded);
+    };
+  }, []);
+
+  function togglePlay() {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (isPlaying) {
+      audio.pause();
+      setIsPlaying(false);
+    } else {
+      onActivate(item.id); 
+      audio.play().catch(() => {});
+      setIsPlaying(true);
+    }
+  }
+
+  function handleSeek(t) {
+    if (audioRef.current) audioRef.current.currentTime = t;
+  }
+
+  function handleVolume(e) {
+    const v = parseFloat(e.target.value);
+    setVolume(v);
+    if (audioRef.current) audioRef.current.volume = v;
+  }
+
+  const waveBars = Array.from({ length: 26 }, (_, i) => (
+    <span
+      key={i}
+      className="wave-bar"
+      style={{
+        animationDelay: `${(i * 0.065).toFixed(3)}s`,
+        height: `${22 + Math.sin(i * 0.85) * 14 + Math.cos(i * 0.5) * 8}%`,
+      }}
+    />
+  ));
+
+  const title       = item.title       || 'Untitled';
+  const artist      = item.creator     || '';   
+  const genre       = item.genre       || 'Beat';
+  const description = item.description || '';
+  const coverURL    = item.imageURL    || '';  
+  const audioSrc    = item.audioURL    || '';  
+
+  return (
+    <article
+      className={`beat-card${isPlaying ? ' is-playing' : ''}`}
+      data-sa-card={String(Math.min(index || 0, 15))}
+    >
+      {audioSrc && <audio ref={audioRef} src={audioSrc} preload="metadata" />}
+
+      {/* Animated waveform backdrop (shows when playing) */}
+      <div className="beat-waveform" aria-hidden="true">{waveBars}</div>
+
+      <div className="beat-inner">
+        {/* Cover art */}
+        <div className="beat-cover-wrap">
+          {coverURL
+            ? <img className="beat-cover" src={coverURL} alt={title} />
+            : <div className="beat-cover-fallback">🎵</div>
+          }
+          <div className="beat-cover-glow" />
+        </div>
+
+        {/* Info + controls */}
+        <div className="beat-body">
+          <span className="beat-genre">{genre}</span>
+
+          <div className="beat-title-row">
+            <h3 className="beat-title">{title}</h3>
+            {artist && <span className="beat-artist">{artist}</span>}
+          </div>
+
+          {description && <p className="beat-desc">{description}</p>}
+
+          <div className="beat-controls">
+            <PlayPauseBtn isPlaying={isPlaying} onClick={togglePlay} />
+
+            <div className="beat-right-controls">
+              <ProgressBar
+                progress={progress}
+                duration={duration}
+                currentTime={currentTime}
+                onSeek={handleSeek}
+              />
+              <div className="beat-volume-row">
+                <span className="beat-vol-icon">♪</span>
+                <input
+                  type="range"
+                  className="beat-volume-slider"
+                  min="0"
+                  max="1"
+                  step="0.02"
+                  value={volume}
+                  onChange={handleVolume}
+                  aria-label="Volume"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+// ─── Beats App (root component) ───────────────────────────────────────────────
+const BEATS_PER_PAGE = 5;
+
+function BeatsPagination({ page, totalPages, onPage }) {
+  if (totalPages <= 1) return null;
+
+  const btns = [];
+
+  // Prev
+  btns.push(
+    <button key="prev" className={'pagination-btn' + (page === 1 ? ' disabled' : '')}
+      disabled={page === 1} onClick={() => onPage(page - 1)}>&#8249;</button>
+  );
+
+  // Page numbers with ellipsis
+  const addNum = (i) => btns.push(
+    <button key={i} className={'pagination-btn pagination-num' + (i === page ? ' active' : '')}
+      disabled={i === page} onClick={() => onPage(i)}>{i}</button>
+  );
+  const addEllipsis = (k) => btns.push(
+    <button key={k} className="pagination-btn pagination-ellipsis" disabled>…</button>
+  );
+
+  if (totalPages <= 7) {
+    for (let i = 1; i <= totalPages; i++) addNum(i);
+  } else {
+    addNum(1);
+    if (page > 3) addEllipsis('e1');
+    const start = Math.max(2, page - 1);
+    const end   = Math.min(totalPages - 1, page + 1);
+    for (let i = start; i <= end; i++) addNum(i);
+    if (page < totalPages - 2) addEllipsis('e2');
+    addNum(totalPages);
+  }
+
+  // Next
+  btns.push(
+    <button key="next" className={'pagination-btn' + (page === totalPages ? ' disabled' : '')}
+      disabled={page === totalPages} onClick={() => onPage(page + 1)}>&#8250;</button>
+  );
+
+  return <div className="pagination" style={{ marginTop: '2rem' }}>{btns}</div>;
+}
+
+function BeatsApp({ initialItems }) {
+  const [items,    setItems]    = useState(initialItems || []);
+  const [filtered, setFiltered] = useState(initialItems || []);
+  const [loading,  setLoading]  = useState(!initialItems);
+  const [activeId, setActiveId] = useState(null);
+  const [page,     setPage]     = useState(1);
+  const listRef = useRef(null);
+
+  // Reset to page 1 when search changes
+  useEffect(() => { setPage(1); }, [filtered]);
+
+  // Re-stamp data-sa-card on visible cards
+  useEffect(() => {
+    if (!listRef.current) return;
+    const cards = listRef.current.querySelectorAll('.beat-card');
+    cards.forEach((el, i) => {
+      el.removeAttribute('data-sa-card');
+      void el.offsetWidth;
+      el.dataset.saCard = String(Math.min(i, 15));
+    });
+  }, [filtered, page]);
+
+  useEffect(() => {
+    if (initialItems) return;
+    if (typeof getAllMediaHub === 'function') {
+      getAllMediaHub()
+        .then(all => {
+          const beats = all.filter(i => i.category === 'beats');
+          setItems(beats);
+          setFiltered(beats);
+          setLoading(false);
+        })
+        .catch(() => setLoading(false));
+    } else {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const searchInput = document.getElementById('search-input');
+    if (!searchInput) return;
+    function onInput() {
+      const q = searchInput.value.toLowerCase().trim();
+      if (!q) { setFiltered(items); return; }
+      setFiltered(
+        items.filter(i =>
+          (i.title   || '').toLowerCase().includes(q) ||
+          (i.creator || '').toLowerCase().includes(q) ||
+          (i.genre   || '').toLowerCase().includes(q)
+        )
+      );
+    }
+    searchInput.addEventListener('input', onInput);
+    return () => searchInput.removeEventListener('input', onInput);
+  }, [items]);
+
+  if (loading) {
+    return (
+      <div className="beats-loading">
+        <div className="beats-loading-spinner" />
+        <p>Loading beats...</p>
+      </div>
+    );
+  }
+
+  if (!filtered.length) {
+    return (
+      <div className="beats-empty">
+        <p style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>🎵</p>
+        <p>{items.length ? 'No beats match your search.' : 'No beats added yet.'}</p>
+      </div>
+    );
+  }
+
+  const totalPages  = Math.ceil(filtered.length / BEATS_PER_PAGE);
+  const safePage    = Math.min(page, totalPages);
+  const start       = (safePage - 1) * BEATS_PER_PAGE;
+  const pageItems   = filtered.slice(start, start + BEATS_PER_PAGE);
+
+  function handlePage(p) {
+    setPage(p);
+    document.getElementById('mediahub-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  return (
+    <div>
+      <div className="beats-list-wrap" ref={listRef}>
+        {pageItems.map((item, idx) => (
+          <BeatCard
+            key={item.id}
+            item={item}
+            activeId={activeId}
+            onActivate={setActiveId}
+            index={idx}
+          />
+        ))}
+      </div>
+      <BeatsPagination page={safePage} totalPages={totalPages} onPage={handlePage} />
+    </div>
+  );
+}
+
+(function mount() {
+  const container = document.getElementById('mediahub-grid');
+  if (!container) return;
+  container.innerHTML = '';
+  ReactDOM.createRoot(container).render(<BeatsApp initialItems={null} />);
+})();
+</script>
+<script src="js/main.js"></script>
+</body>
+</html>

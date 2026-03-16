@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LINESBYLIN</title>
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cinzel+Decorative:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/page-enhancements.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/scroll-animations.css">
+  <link rel="stylesheet" href="css/tsushima-theme.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">LINESBYLIN </a>
+    <ul class="nav-menu" id="nav-menu">
+      <li class="nav-item"><a href="index.html" class="nav-link active">Home</a></li>
+      <li class="nav-item"><a href="index.html#about" class="nav-link">About</a></li>
+      <li class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle">Work</a>
+        <div class="dropdown-menu">
+          <a href="blog.html" class="dropdown-item">Blog</a>
+          <a href="poems.html" class="dropdown-item">Poems</a>
+          <a href="stories.html" class="dropdown-item">Stories</a>
+          <a href="biography.html" class="dropdown-item">Biography</a>
+          <a href="code.html" class="dropdown-item">Code</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle">MediaHub</a>
+        <div class="dropdown-menu">
+          <a href="beats.html" class="dropdown-item">Beats</a>
+          <a href="movies.html" class="dropdown-item">Movies</a>
+          <a href="tvshows.html" class="dropdown-item">Shows</a>
+        </div>
+      </li>
+      <li class="nav-item"><a href="dream-map.html" class="nav-link">Dreams</a></li>
+      <li class="nav-item"><a href="index.html#contact" class="nav-link">Contact</a></li>
+    </ul>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="container">
+    <div class="hero-content">
+      <span class="hero-eyebrow">Welcome to LINESBYLIN</span>
+      <h1 class="hero-title">Stories Live in the Spaces Between Words</h1>
+      <p class="hero-subtitle">A small space on the internet where I try to make sense of my thoughts by turning them into words.</p>
+      <div class="hero-actions">
+        <a href="blog.html" class="btn btn-primary">Explore</a>
+        <a href="mediahub.html" class="btn btn-secondary">MediaHub</a>
+      </div>
+    </div>
+  </div>
+  <canvas id="leaves-canvas" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;"></canvas>
+<style>
+#leaves-canvas { display:block; }
+</style>
+<script>
+(function() {
+  var canvas = document.getElementById('leaves-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+
+  // Red palette — body (lighter), dark (shadow half), mid (veins/stem)
+  var PALETTES = [
+    { body:'#C01010', dark:'#7A0808', mid:'#901010' },
+    { body:'#B01818', dark:'#700A0A', mid:'#880E0E' },
+    { body:'#D41414', dark:'#901010', mid:'#A81010' },
+    { body:'#901010', dark:'#5A0808', mid:'#780C0C' },
+    { body:'#BF1A1A', dark:'#821010', mid:'#9E1212' },
+    { body:'#A80E0E', dark:'#680808', mid:'#880A0A' },
+    { body:'#CC1010', dark:'#880C0C', mid:'#AA0E0E' },
+  ];
+
+  var COUNT = 14;
+  var leaves = [];
+
+  function resize() {
+    canvas.width  = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  }
+
+  // ── Leaf B: maple/star leaf (joypixels, viewBox 0 0 64 64)
+  // Drawn with (0,0) at center of the 64x64 box → translate(-32,-32)
+  function drawLeafB(ctx, size, pal) {
+    var s = size / 64;
+    ctx.scale(s, s);
+    ctx.translate(-32, -32);
+
+    // Outer body
+    ctx.beginPath();
+    ctx.moveTo(59.3,33.6);
+    ctx.bezierCurveTo(58.2,33.1,58.2,32.2,58.3,31.5);
+    ctx.lineTo(60.9,22.4); ctx.lineTo(52.2,24.2);
+    ctx.bezierCurveTo(51.9,24.2,51.1,24.2,50.6,22.5);
+    ctx.lineTo(49.8,19.4); ctx.lineTo(43.8,26.4);
+    ctx.bezierCurveTo(43.8,26.4,39.9,30.7,41.1,24.2);
+    ctx.lineTo(43.7,10.3); ctx.lineTo(38.9,12.7);
+    ctx.bezierCurveTo(38.6,12.8,37.7,12.9,36.4,10.5);
+    ctx.lineTo(32,2); ctx.lineTo(27.6,10.4);
+    ctx.bezierCurveTo(26.3,12.8,25.4,12.7,25.1,12.6);
+    ctx.lineTo(20.3,10.2); ctx.lineTo(22.9,24.1);
+    ctx.bezierCurveTo(24.1,30.6,20.2,26.3,20.2,26.3);
+    ctx.lineTo(14.2,19.3); ctx.lineTo(13.4,22.4);
+    ctx.bezierCurveTo(13.0,24.1,12.1,24.2,11.8,24.1);
+    ctx.lineTo(3.1,22.3); ctx.lineTo(5.7,31.4);
+    ctx.bezierCurveTo(5.8,32.1,5.8,33.0,4.7,33.5);
+    ctx.lineTo(2,34.8);
+    ctx.bezierCurveTo(2,34.8,12,42.8,15.2,45.5);
+    ctx.bezierCurveTo(15.8,46.0,17.4,47.6,16.8,49.2);
+    ctx.lineTo(15.6,52.8); ctx.lineTo(29.2,50.7);
+    ctx.bezierCurveTo(29.9,50.6,33.8,50.6,34.5,50.7);
+    ctx.lineTo(48.1,52.8); ctx.lineTo(46.9,49.2);
+    ctx.bezierCurveTo(46.4,47.5,47.9,46.0,48.5,45.5);
+    ctx.bezierCurveTo(51.7,42.8,61.7,34.8,61.7,34.8);
+    ctx.lineTo(59.3,33.6);
+    ctx.closePath();
+    ctx.fillStyle = pal.body;
+    ctx.fill();
+
+    // Inner detail overlay
+    ctx.beginPath();
+    ctx.moveTo(56.8,35.5);
+    ctx.bezierCurveTo(55.0,35.6,53.3,35.7,51.5,35.8);
+    ctx.bezierCurveTo(48.6,35.9,45.7,36.0,42.7,36.0);
+    ctx.bezierCurveTo(44.0,35.1,45.2,34.1,46.5,33.2);
+    ctx.lineTo(53.8,27.9); ctx.lineTo(57.4,25.2);
+    ctx.bezierCurveTo(58.6,24.3,59.8,23.4,60.9,22.3);
+    ctx.bezierCurveTo(59.8,23.3,58.5,24.1,57.3,25.0);
+    ctx.lineTo(53.6,27.5); ctx.lineTo(46.4,32.2);
+    ctx.bezierCurveTo(46.9,30.3,47.4,28.3,47.9,26.4);
+    ctx.lineTo(48.9,22.9);
+    ctx.bezierCurveTo(49.5,20.5,49.1,21.7,48.6,22.8);
+    ctx.lineTo(47.4,26.3);
+    ctx.bezierCurveTo(46.6,28.6,45.9,30.8,45.2,33.1);
+    ctx.bezierCurveTo(43.0,34.6,40.8,36.0,38.6,37.5);
+    ctx.lineTo(34.9,40.1); ctx.lineTo(33.1,41.5); ctx.lineTo(32.7,27.6);
+    ctx.bezierCurveTo(35.7,21.5,37.6,18.7,43.9,10.2);
+    ctx.bezierCurveTo(41.5,12.8,37.2,18.4,32.7,25.6);
+    ctx.lineTo(32.0,4.3); ctx.lineTo(31.4,25.6);
+    ctx.bezierCurveTo(28.5,20.7,24.8,15.5,20.2,10.2);
+    ctx.bezierCurveTo(24.5,15.8,28.3,21.6,31.4,27.6);
+    ctx.lineTo(31.0,41.4); ctx.lineTo(29.2,40.0);
+    ctx.bezierCurveTo(26.7,38.2,23.3,35.9,18.9,33.0);
+    ctx.bezierCurveTo(17.5,28.5,15.1,21.6,14.1,19.3);
+    ctx.bezierCurveTo(14.9,21.6,16.7,28.2,17.7,32.1);
+    ctx.lineTo(10.5,27.4); ctx.lineTo(6.8,24.9);
+    ctx.bezierCurveTo(4.3,23.2,3.2,22.2,3.2,22.2);
+    ctx.bezierCurveTo(5.5,24.2,10.3,27.8,17.6,33.1);
+    ctx.bezierCurveTo(19.3,34.1,21.4,35.9,22.7,37.0);
+    ctx.bezierCurveTo(18.5,35.9,10.8,35.6,7.3,35.4);
+    ctx.bezierCurveTo(3.8,35.1,3.8,35.1,2.1,34.7);
+    ctx.bezierCurveTo(5.6,35.4,12.6,36.3,22.7,37.0);
+    ctx.bezierCurveTo(24.1,38.0,25.9,39.5,28.1,41.2);
+    ctx.bezierCurveTo(24.4,45.0,20.4,49.0,15.9,52.8);
+    ctx.bezierCurveTo(18.4,51.1,22.9,47.2,28.9,41.8);
+    ctx.bezierCurveTo(29.7,42.4,30.8,43.6,31.1,44.0);
+    ctx.lineTo(30.5,62.0); ctx.lineTo(33.5,62.0); ctx.lineTo(33.0,44.1);
+    ctx.bezierCurveTo(33.7,43.3,34.8,42.2,35.1,41.9);
+    ctx.lineTo(41.1,47.3);
+    ctx.bezierCurveTo(44.5,50.2,46.8,52.1,48.1,52.9);
+    ctx.bezierCurveTo(45.8,51.1,41.5,47.0,35.9,41.3);
+    ctx.bezierCurveTo(38.1,39.5,40.6,37.6,41.3,37.1);
+    ctx.bezierCurveTo(48.0,36.7,56.7,35.8,61.9,34.9);
+    ctx.bezierCurveTo(58.5,35.4,56.8,35.5,56.8,35.5);
+    ctx.closePath();
+    ctx.fillStyle = pal.dark;
+    ctx.fill();
+  }
+
+  function randomLeaf() {
+    var size   = 24 + Math.random() * 18;
+    var startX = canvas.width * (0.56 + Math.random() * 0.44);
+    var startY = -size * 2 - Math.random() * canvas.height * 0.5;
+    return {
+      x:       startX,
+      y:       startY,
+      size:    size,
+      palette: PALETTES[Math.floor(Math.random() * PALETTES.length)],
+      type:    'B',
+      vx:      -(0.13 + Math.random() * 0.14),
+      vy:      0.16 + Math.random() * 0.16,
+      angle:   Math.random() * Math.PI * 2,
+      vAngle:  (Math.random() - 0.5) * 0.006,
+      swayAmp: 0.09 + Math.random() * 0.10,
+      swayFreq:0.004 + Math.random() * 0.003,
+      swayOff: Math.random() * Math.PI * 2,
+      tick:    0,
+      opacity: 0.78 + Math.random() * 0.22,
+    };
+  }
+
+  function init() {
+    leaves = [];
+    for (var i = 0; i < COUNT; i++) {
+      var l = randomLeaf();
+      l.y    = -l.size * 2 + (Math.random() * (canvas.height + 100));
+      l.tick = Math.random() * 1000;
+      leaves.push(l);
+    }
+  }
+
+  var rafId;
+  var heroEl  = canvas.closest('.hero');
+  var running = false;
+
+  function loop() {
+    if (!running) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (var i = 0; i < leaves.length; i++) {
+      var l = leaves[i];
+      l.tick++;
+      var sway = Math.sin(l.tick * l.swayFreq + l.swayOff) * l.swayAmp;
+      l.x += l.vx + sway;
+      l.y += l.vy;
+      l.angle += l.vAngle;
+
+      if (l.y > canvas.height + 30 || l.x < -30) {
+        var fresh = randomLeaf();
+        fresh.y   = -fresh.size * 3;
+        fresh.tick = 0;
+        leaves[i] = fresh;
+        continue;
+      }
+
+      ctx.save();
+      ctx.globalAlpha = l.opacity;
+      ctx.translate(l.x, l.y);
+      ctx.rotate(l.angle);
+      drawLeafB(ctx, l.size, l.palette);
+      ctx.restore();
+    }
+
+    rafId = requestAnimationFrame(loop);
+  }
+
+  function checkVisibility() {
+    if (!heroEl) return;
+    var rect  = heroEl.getBoundingClientRect();
+    var inView = rect.bottom > 0 && rect.top < window.innerHeight;
+    if (inView && !running) {
+      running = true; loop();
+    } else if (!inView && running) {
+      running = false;
+      cancelAnimationFrame(rafId);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+
+  window.addEventListener('resize', function() { resize(); init(); }, { passive: true });
+  window.addEventListener('scroll', checkVisibility, { passive: true });
+
+  resize();
+  init();
+  running = true;
+  loop();
+})();
+</script>
+  <div class="hero-scroll-cue"><div class="hero-scroll-cue-line"></div><span class="hero-scroll-cue-label">Scroll</span></div>
+</section>
+
+<!-- ABOUT -->
+<section class="section section-alt" id="about">
+  <div class="container">
+    <div class="about-content">
+
+      <div class="about-art">
+        <div class="about-art-frame">
+          <img src="assets/images/art1.png" style="width:100%;max-width:420px;height:auto;aspect-ratio:7/10;object-fit:cover;cursor:zoom-in;" alt="About Art" onclick="document.getElementById('about-art-lb').style.display='flex'">
+        </div>
+      </div>
+
+      <div id="about-art-lb" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.92);align-items:center;justify-content:center;">
+        <button onclick="document.getElementById('about-art-lb').style.display='none'" style="position:absolute;top:20px;right:24px;width:40px;height:40px;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">&#x2715;</button>
+        <img src="assets/images/art1.png" style="max-width:90vw;max-height:90vh;object-fit:contain;box-shadow:0 20px 60px rgba(0,0,0,0.6);">
+      </div>
+
+      <div class="about-text-col">
+        <span class="about-eyebrow"><svg style="width:12px;height:12px;flex-shrink:0;vertical-align:middle;display:inline-block;margin-right:6px;opacity:0.6;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M20 4C12 4 6 10 5 20"/><path d="M20 4c-4 8-10 12-15 16"/><line x1="5" y1="20" x2="8" y2="17"/></svg> About the Website and Myself</span>
+        <h2 class="about-heading">Bridging Technology and Art</h2>
+
+        <blockquote class="about-quote">
+          "If it meant something to me, it'll show up here."
+        </blockquote>
+
+        <p class="about-body">This website is a digital escape where I can overthink, romanticize everyday things, and sometimes pretend I've got it all figured out through writing. Whether it came from a late-night burst of inspiration or a quiet moment — if it meant something to me, it might show up here.</p>
+        <p class="about-body">Here, you'll find a collection of my writing, from dreamy poems to pieces I like to think of as "literature."</p>
+
+        <div class="about-stats">
+          <div class="about-stat">
+            <span class="stat-num">Poems</span>
+            <span class="stat-label">Written from feeling</span>
+          </div>
+          <div class="about-stat-divider"></div>
+          <div class="about-stat">
+            <span class="stat-num">Stories</span>
+            <span class="stat-label">Built from imagination</span>
+          </div>
+          <div class="about-stat-divider"></div>
+          <div class="about-stat">
+            <span class="stat-num">Essays</span>
+            <span class="stat-label">Shaped from thought</span>
+          </div>
+        </div>
+
+        <div class="about-tags">
+          <span class="about-tag">Literature</span>
+          <span class="about-tag">Music</span>
+          <span class="about-tag">Film</span>
+          <span class="about-tag">Late nights</span>
+          <span class="about-tag">Coffee</span>
+          <span class="about-tag">Philippines</span>
+        </div>
+
+        <a href="biography.html" class="btn btn-primary about-cta">Read Full Biography</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- LATEST WORKS -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-eyebrow">Selected writing</span>
+      <h2 class="section-title"><svg style="width:18px;height:18px;flex-shrink:0;vertical-align:middle;display:inline-block;margin-right:10px;opacity:0.7;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M2 4h8a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H2z"/><path d="M22 4h-8a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h8z"/></svg> Latest Works</h2>
+    </div>
+    <div class="featured-grid" id="featured-grid">
+      <div class="loading">
+        <div class="loading-spinner"></div>
+        <p>Loading works...</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- CODE & PROJECTS -->
+<section class="section section-alt" id="code-section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-eyebrow">Built with purpose</span>
+      <h2 class="section-title"><svg style="width:18px;height:18px;flex-shrink:0;vertical-align:middle;display:inline-block;margin-right:10px;opacity:0.7;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg> Code &amp; Projects</h2>
+      <p class="section-subtitle">Things I've built — from small tools to full sites.</p>
+    </div>
+    <div class="code-preview-grid" id="code-preview-grid"></div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="section" id="gallery">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-eyebrow">Visual collection</span>
+      <h2 class="section-title"><svg style="width:18px;height:18px;flex-shrink:0;vertical-align:middle;display:inline-block;margin-right:10px;opacity:0.7;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg> Gallery</h2>
+      <p class="section-subtitle">A collection of visuals that live in my head rent-free.</p>
+    </div>
+    <div id="collections-grid" class="cgl-grid"></div>
+  </div>
+</section>
+
+<!-- Gallery Modal -->
+<div id="gl-modal">
+  <div id="gl-modal-inner">
+    <button id="gl-modal-close">&#x2715;</button>
+    <h2 id="gl-modal-title"></h2>
+    <div id="gl-thumb-grid"></div>
+  </div>
+</div>
+<div id="gl-lb-backdrop"></div>
+<div id="gl-lightbox">
+  <button id="gl-lb-close">&#x2715;</button>
+  <button id="gl-lb-prev">&#8592;</button>
+  <div id="gl-lb-content">
+    <div id="gl-lb-img-wrap"></div>
+    <p id="gl-lb-caption"></p>
+  </div>
+  <button id="gl-lb-next">&#8594;</button>
+</div>
+
+<!-- QUOTE INTERLUDE -->
+<section class="quote-interlude" id="quote-interlude">
+  <div class="qi-inner">
+    <div class="qi-quotes-wrap">
+
+      <blockquote class="qi-quote active" data-index="0">
+        <p class="qi-text">&#8220;True growth begins the moment we stop chasing who we think we should be, and start listening to the quiet truth of who we already are.&#8221;</p>
+        <cite class="qi-cite"><span class="qi-cite-rule"></span>linesbylin</cite>
+      </blockquote>
+
+      <blockquote class="qi-quote" data-index="1">
+        <p class="qi-text">&#8220;Stop measuring your progress by the mountains you have climbed, and start measuring it by the depth of the roots you have grown while standing still.&#8221;</p>
+        <cite class="qi-cite"><span class="qi-cite-rule"></span>linesbylin</cite>
+      </blockquote>
+
+      <blockquote class="qi-quote" data-index="2">
+        <p class="qi-text">&#8220;You were never meant to be a polished stone in someone else&#8217;s garden. You were meant to be the wild, unmapped terrain that defines its own horizon.&#8221;</p>
+        <cite class="qi-cite"><span class="qi-cite-rule"></span>linesbylin</cite>
+      </blockquote>
+
+      <blockquote class="qi-quote" data-index="3">
+        <p class="qi-text">&#8220;We often drown trying to save the &#8216;perfect&#8217; version of ourselves, forgetting that the one currently treading water is the only one who can actually swim.&#8221;</p>
+        <cite class="qi-cite"><span class="qi-cite-rule"></span>linesbylin</cite>
+      </blockquote>
+
+      <blockquote class="qi-quote" data-index="4">
+        <p class="qi-text">&#8220;Stop trying to build a monument out of your life for others to admire. Build a home that you actually want to live in.&#8221;</p>
+        <cite class="qi-cite"><span class="qi-cite-rule"></span>linesbylin</cite>
+      </blockquote>
+
+      <blockquote class="qi-quote" data-index="5">
+        <p class="qi-text">&#8220;Your sensitivity is not a lack of armor; it is a finely tuned compass that allows you to navigate hearts that others simply pass.&#8221;</p>
+        <cite class="qi-cite"><span class="qi-cite-rule"></span>linesbylin</cite>
+      </blockquote>
+
+    </div>
+    <div class="qi-dots" id="qi-dots">
+      <button class="qi-dot active" data-i="0" aria-label="Quote 1"></button>
+      <button class="qi-dot" data-i="1" aria-label="Quote 2"></button>
+      <button class="qi-dot" data-i="2" aria-label="Quote 3"></button>
+      <button class="qi-dot" data-i="3" aria-label="Quote 4"></button>
+      <button class="qi-dot" data-i="4" aria-label="Quote 5"></button>
+      <button class="qi-dot" data-i="5" aria-label="Quote 6"></button>
+    </div>
+  </div>
+</section>
+
+<style>
+.quote-interlude {
+  background: #0F0F10;
+  position: relative;
+  overflow: hidden;
+  padding: 110px 0 90px;
+  border-top: 1px solid rgba(201,166,91,0.1);
+}
+
+.qi-inner {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 44px;
+  position: relative;
+  z-index: 1;
+}
+.qi-quotes-wrap {
+  position: relative;
+  width: 100%;
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.qi-quote {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  pointer-events: none;
+  margin: 0; padding: 0; border: none;
+  text-align: center;
+}
+.qi-quote.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  position: relative;
+}
+.qi-text {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+  line-height: 1.75;
+  color: rgba(245,243,238,0.88);
+  letter-spacing: 0.01em;
+  margin: 0;
+  max-width: 680px;
+  text-align: center;
+}
+.qi-cite {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(245,243,238,0.22);
+  font-style: normal;
+}
+.qi-cite-rule {
+  display: inline-block;
+  width: 28px;
+  height: 1px;
+  background: rgba(214,69,69,0.5);
+  flex-shrink: 0;
+}
+.qi-dots {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+}
+.qi-dot {
+  width: 5px; height: 5px;
+  background: rgba(245,243,238,0.1);
+  border: none; cursor: pointer;
+  transform: rotate(45deg);
+  transition: background 0.25s, transform 0.25s;
+  padding: 0; flex-shrink: 0;
+}
+.qi-dot.active {
+  background: rgba(201,166,91,0.65);
+  transform: rotate(45deg) scale(1.4);
+}
+.qi-dot:hover { background: rgba(201,166,91,0.35); }
+@media (max-width: 640px) {
+  .quote-interlude { padding: 72px 0 56px; }
+  .qi-inner { padding: 0 24px; gap: 32px; }
+  .qi-quotes-wrap { min-height: 220px; }
+  .qi-text { font-size: clamp(1.05rem, 4.5vw, 1.35rem); }
+}
+</style>
+
+<script>
+(function() {
+  var quotes  = document.querySelectorAll('.qi-quote');
+  var dots    = document.querySelectorAll('.qi-dot');
+  var current = 0;
+  var timer;
+  function goTo(n) {
+    quotes[current].classList.remove('active');
+    dots[current].classList.remove('active');
+    current = (n + quotes.length) % quotes.length;
+    quotes[current].classList.add('active');
+    dots[current].classList.add('active');
+  }
+  function start() { timer = setInterval(function(){ goTo(current + 1); }, 7000); }
+  function stop()  { clearInterval(timer); }
+  dots.forEach(function(dot) {
+    dot.addEventListener('click', function() { stop(); goTo(parseInt(this.dataset.i)); start(); });
+  });
+  var wrap = document.querySelector('.qi-quotes-wrap');
+  if (wrap) { wrap.addEventListener('mouseenter', stop); wrap.addEventListener('mouseleave', start); }
+  start();
+})();
+</script>
+
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+
+    <div class="contact-row">
+      <div class="contact-left">
+        <h2 class="contact-heading">Let's Connect.</h2>
+        <p class="contact-subtext">My inbox is always open.</p>
+      </div>
+      <div class="contact-right">
+        <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;">
+          <svg style="width:13px;height:13px;flex-shrink:0;opacity:0.5;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><rect x="2" y="4" width="20" height="16"/><polyline points="2 4 12 13 22 4"/></svg>
+          <a href="mailto:dinawanao.lixternino@ue.edu.ph" class="contact-link">dinawanao.lixternino@ue.edu.ph</a>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;">
+          <svg style="width:13px;height:13px;flex-shrink:0;opacity:0.5;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <a href="tel:+639193836894" class="contact-link">(+63) 919 383 6894</a>
+        </div>
+        <p class="contact-location"><svg style="width:12px;height:12px;flex-shrink:0;vertical-align:middle;display:inline-block;margin-right:5px;opacity:0.4;vertical-align:middle;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M12 2a7 7 0 0 1 7 7c0 5.25-7 13-7 13S5 14.25 5 9a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/></svg> Caloocan City, Philippines</p>
+        <div class="contact-social">
+          <p class="contact-social-label">Find me on</p>
+          <a href="https://github.com/LysValenforth" class="contact-social-btn" aria-label="GitHub" target="_blank" rel="noopener">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.09.682-.22.682-.485 0-.236-.008-.859-.013-1.687-2.782.592-3.369-1.974-3.369-1.974-.454-1.147-1.11-1.452-1.11-1.452-.908-.62.069-.607.069-.607 1.003.07 1.531.947 1.531.947.892 1.527 2.341 1.086 2.91.831.092-.647.35-1.086.636-1.337-2.22-.253-4.555-1.145-4.555-5.195 0-1.148.39-2.085 1.029-2.82-.103-.253-.446-1.337.098-2.787 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0 1 12 6.82c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.45.203 2.534.1 2.787.64.735 1.028 1.672 1.028 2.82 0 4.058-2.339 4.95-4.566 5.21.359.31.678.92.678 1.852 0 1.336-.012 2.415-.012 2.744 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/>
+          </svg>
+        </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+
+<!-- MARQUEE TICKER -->
+<div class="marquee-section">
+  <div class="marquee-track" id="marquee-track">
+    <div class="marquee-inner" id="marquee-inner"></div>
+  </div>
+</div>
+
+<style>
+.marquee-section {
+  background: #0A0A0B;
+  border-top: 1px solid rgba(201,166,91,0.12);
+  border-bottom: 1px solid rgba(201,166,91,0.08);
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+}
+.marquee-section::before,
+.marquee-section::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 120px;
+  z-index: 2;
+  pointer-events: none;
+}
+.marquee-section::before {
+  left: 0;
+  background: linear-gradient(to right, #0A0A0B 0%, transparent 100%);
+}
+.marquee-section::after {
+  right: 0;
+  background: linear-gradient(to left, #0A0A0B 0%, transparent 100%);
+}
+.marquee-track {
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+}
+.marquee-inner {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  white-space: nowrap;
+  will-change: transform;
+  animation: marquee-scroll 32s linear infinite;
+}
+.marquee-inner:hover { animation-play-state: paused; }
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.marquee-item {
+  display: inline-flex;
+  align-items: center;
+  padding: 18px 32px;
+  gap: 0;
+}
+.marquee-text {
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(245,243,238,0.35);
+  transition: color 0.2s;
+  white-space: nowrap;
+}
+.marquee-text.gold { color: rgba(201,166,91,0.55); }
+.marquee-text.crimson { color: rgba(214,69,69,0.45); }
+.marquee-inner:hover .marquee-text { color: rgba(245,243,238,0.55); }
+.marquee-inner:hover .marquee-text.gold { color: rgba(201,166,91,0.8); }
+.marquee-inner:hover .marquee-text.crimson { color: rgba(214,69,69,0.7); }
+
+</style>
+
+<script>
+(function() {
+  var items = [
+    { text: 'Poems',              cls: 'gold'    },
+    { text: 'Stories',            cls: ''        },
+    { text: 'Essays',             cls: ''        },
+    { text: 'Original Beats',     cls: 'gold'    },
+    { text: 'Films & Shows',      cls: ''        },
+    { text: 'Code & Projects',    cls: ''        },
+    { text: 'Gallery',            cls: 'gold'    },
+    { text: 'Dream Journal',      cls: ''        },
+    { text: 'Written from Feeling',  cls: 'crimson' },
+    { text: 'Built from Imagination',cls: ''     },
+    { text: 'Shaped from Thought',   cls: 'crimson' },
+    { text: 'Philippines',        cls: ''        },
+    { text: 'Literature',         cls: 'gold'    },
+    { text: 'Music',              cls: ''        },
+    { text: 'Late Nights',        cls: ''        },
+    { text: 'Coffee',             cls: 'gold'    },
+  ];
+
+  var inner = document.getElementById('marquee-inner');
+  if (!inner) return;
+
+  // Build two full sets so the seamless loop works
+  function buildSet() {
+    return items.map(function(item) {
+      return '<span class="marquee-item">'
+        + '<span class="marquee-text ' + item.cls + '">' + item.text + '</span>'
+        + ''
+        + '</span>';
+    }).join('');
+  }
+
+  inner.innerHTML = buildSet() + buildSet();
+})();
+</script>
+
+<footer class="footer">
+  <div class="footer-content">
+    <span class="footer-logo">LINESBYLIN</span>
+    <div class="footer-links">
+      <a href="blog.html">Blog</a>
+      <a href="poems.html">Poems</a>
+      <a href="stories.html">Stories</a>
+      <a href="code.html">Code</a>
+      <a href="mediahub.html">MediaHub</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 LinesByLin</p>
+  </div>
+</footer>
+
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-circle-wrap">
+    <div class="progress-circle-track"></div>
+    <div class="progress-circle-fill" id="progressCircle"></div>
+  </div>
+  <span class="progress-icon-text" style="font-family:'Cinzel',serif;font-size:.65rem;color:#C9A65B;letter-spacing:.04em;">&#8593;</span>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+<script src="js/firebase.js"></script>
+<script src="js/firebase-gallery.js"></script>
+<script src="js/main.js"></script>
+<script src="js/scroll-animations.js"></script>
+
+<style>
+/* Gallery grid */
+.cgl-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+@media(max-width:900px){ .cgl-grid{ grid-template-columns:repeat(2,1fr); } }
+@media(max-width:560px){ .cgl-grid{ grid-template-columns:1fr; } }
+
+.collection-card-gl { background:var(--fog-white,#E7E5DF); border:1px solid rgba(0,0,0,.1); overflow:hidden; cursor:pointer; transition:all .22s; }
+.collection-card-gl:hover { transform:translate(-3px,-3px); box-shadow:6px 6px 0 rgba(0,0,0,.1); border-color:var(--ghost-crimson,#D64545); }
+
+.cgl-img { width:100%; height:210px; position:relative; overflow:hidden; }
+.cgl-img-ph { width:100%;height:100%;background:var(--mist-bg,#DCD9D1);display:flex;align-items:center;justify-content:center;position:relative; }
+.cgl-img-overlay { position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:flex-end;padding:14px; }
+.cgl-view-btn { font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--panel-black,#0F0F10);background:rgba(255,255,255,.9);padding:5px 12px;opacity:0;transform:translateY(6px);transition:all .22s; }
+.collection-card-gl:hover .cgl-view-btn { opacity:1; transform:translateY(0); }
+
+.cgl-body { padding:16px 20px 20px; }
+.cgl-cat { font-family:'Cinzel',serif;font-size:.56rem;font-weight:500;color:var(--samurai-gold,#C9A65B);text-transform:uppercase;letter-spacing:.16em; }
+.cgl-title { font-family:'Cinzel',serif;font-size:1rem;color:var(--panel-black,#0F0F10);margin:6px 0 8px;line-height:1.3;font-weight:400; }
+.cgl-desc { font-family:'EB Garamond',serif;font-style:italic;font-size:.9rem;color:#5A5852;line-height:1.65;margin-bottom:12px; }
+.cgl-tags { display:flex;gap:6px;flex-wrap:wrap; }
+.cgl-tag { font-family:'Cinzel',serif;font-size:.54rem;font-weight:500;color:var(--panel-black,#0F0F10);background:rgba(0,0,0,.06);padding:3px 10px;letter-spacing:.1em;text-transform:uppercase; }
+
+/* Gallery modal */
+#gl-modal { position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:24px; }
+#gl-modal.open { display:flex; }
+#gl-modal-inner { background:var(--parchment-light,#F1EFE9);border:1px solid rgba(0,0,0,.12);box-shadow:16px 16px 0 rgba(0,0,0,.1);width:100%;max-width:880px;max-height:85vh;overflow-y:auto;padding:40px;position:relative; }
+#gl-modal-close { position:absolute;top:16px;right:16px;width:36px;height:36px;border:1px solid rgba(0,0,0,.15);background:var(--fog-white,#E7E5DF);color:var(--panel-black,#0F0F10);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s; }
+#gl-modal-close:hover { background:var(--ghost-crimson,#D64545);color:#fff;border-color:var(--ghost-crimson,#D64545); }
+#gl-modal-title { font-family:'Cinzel',serif;font-size:1.6rem;color:var(--panel-black,#0F0F10);margin-bottom:24px;padding-right:40px;font-weight:400;letter-spacing:.06em; }
+#gl-thumb-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px; }
+
+.gl-thumb { overflow:hidden;aspect-ratio:1;cursor:pointer;position:relative;border:1px solid rgba(0,0,0,.1);transition:all .18s; }
+.gl-thumb:hover { transform:translate(-2px,-2px);box-shadow:4px 4px 0 rgba(0,0,0,.1);border-color:var(--ghost-crimson,#D64545); }
+.gl-thumb img { width:100%;height:100%;object-fit:cover;display:block; }
+.gl-thumb-ov { position:absolute;inset:0;background:rgba(0,0,0,0);display:flex;align-items:flex-end;padding:8px;transition:background .2s; }
+.gl-thumb:hover .gl-thumb-ov { background:rgba(0,0,0,.5); }
+.gl-thumb-label { font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:#fff;opacity:0;transform:translateY(6px);transition:all .2s; }
+.gl-thumb:hover .gl-thumb-label { opacity:1;transform:translateY(0); }
+
+/* Lightbox */
+#gl-lb-backdrop { position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.93);display:none; }
+#gl-lb-backdrop.open { display:block; }
+#gl-lightbox { position:fixed;inset:0;z-index:3001;display:none;align-items:center;justify-content:center;gap:24px;padding:60px 16px 16px; }
+#gl-lightbox.open { display:flex; }
+#gl-lb-close { position:fixed;top:18px;right:22px;width:40px;height:40px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:3002; }
+#gl-lb-prev,#gl-lb-next { width:48px;height:48px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;font-size:1.4rem;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:background .2s; }
+#gl-lb-prev:hover,#gl-lb-next:hover { background:rgba(255,255,255,.2); }
+#gl-lb-content { display:flex;flex-direction:column;align-items:center;max-width:800px;width:100%; }
+#gl-lb-img-wrap { width:100%;overflow:hidden;border:1px solid rgba(255,255,255,.1);box-shadow:0 20px 60px rgba(0,0,0,.6);min-height:200px;background:rgba(255,255,255,.04); }
+#gl-lb-img-wrap img { width:100%;max-height:65vh;object-fit:contain;display:block; }
+#gl-lb-caption { margin-top:16px;color:rgba(255,255,255,.7);font-family:'EB Garamond',serif;font-style:italic;font-size:1rem;text-align:center; }
+
+/* Code preview grid */
+.code-preview-grid { display:grid;grid-template-columns:1fr 1fr;gap:24px; }
+@media(max-width:640px){ .code-preview-grid{ grid-template-columns:1fr; } }
+
+.code-preview-card { background:var(--fog-white,#E7E5DF);border:1px solid rgba(0,0,0,.1);overflow:hidden;display:flex;flex-direction:column;text-decoration:none;transition:all .22s; }
+.code-preview-card:hover { transform:translate(-3px,-3px);box-shadow:6px 6px 0 rgba(0,0,0,.1);border-color:rgba(0,0,0,.2); }
+
+.code-card-banner { height:110px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden; }
+.banner-green { background:linear-gradient(135deg,#2F5D50,#4a8a78); }
+.banner-blue  { background:linear-gradient(135deg,#A7C4BC,#7aa9a0); }
+.banner-moss  { background:linear-gradient(135deg,#1E3D36,#2F5D50); }
+.banner-beige { background:linear-gradient(135deg,#E8DCC8,#d4c4a8); }
+.banner-teal  { background:linear-gradient(135deg,#4a8a78,#A7C4BC); }
+.banner-dark  { background:linear-gradient(135deg,#1E3D36,#0d1f1b); }
+.code-card-icon { font-size:2.2rem;z-index:1; }
+
+.code-card-body { padding:20px;display:flex;flex-direction:column;gap:8px;flex:1; }
+.code-card-badge { display:inline-block;font-family:'Cinzel',serif;font-size:.52rem;font-weight:500;text-transform:uppercase;letter-spacing:.1em;padding:2px 8px;width:fit-content; }
+.code-card-title { font-family:'Cinzel',serif;font-size:1rem;color:var(--panel-black,#0F0F10);font-weight:400;letter-spacing:.04em; }
+.code-card-desc { font-family:'EB Garamond',serif;font-style:italic;font-size:.95rem;color:#5A5852;line-height:1.6; }
+.code-card-tags { display:flex;flex-wrap:wrap;gap:5px;margin-top:4px; }
+.code-mini-tag { font-family:'Cinzel',serif;font-size:.5rem;font-weight:500;padding:2px 8px;background:rgba(0,0,0,.06);color:var(--panel-black,#0F0F10);letter-spacing:.1em;text-transform:uppercase; }
+
+/* Contact section */
+#contact { background:var(--panel-black,#0F0F10);padding:80px 0 48px;position:relative;overflow:hidden; }
+/* contact top border removed — quote interlude flows directly into contact */
+.contact-quote-block { text-align:center;margin-bottom:48px;padding-bottom:40px;border-bottom:1px solid rgba(201,166,91,.12); }
+.contact-quote-text { font-family:'EB Garamond',serif;font-style:italic;color:rgba(245,243,238,.82);line-height:1.85;font-size:1.1rem;max-width:620px;margin:0 auto 10px; }
+.contact-quote-sig { font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--samurai-gold,#C9A65B); }
+.contact-row { display:flex;align-items:flex-end;justify-content:space-between;gap:40px;flex-wrap:wrap; }
+.contact-heading { font-family:'Cinzel',serif;font-size:clamp(2rem,6vw,4.5rem);color:var(--text-cream,#F5F3EE);letter-spacing:.06em;font-weight:400;line-height:1.05;margin-bottom:6px; }
+.contact-subtext { font-family:'EB Garamond',serif;font-style:italic;color:rgba(245,243,238,.4);font-size:1rem;margin:0; }
+.contact-right { display:flex;flex-direction:column;gap:0;text-align:right;min-width:220px; }
+.contact-link { font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--samurai-gold,#C9A65B);text-decoration:none;opacity:.85;transition:opacity .18s; }
+.contact-link:hover { opacity:1; }
+.contact-location { font-family:'EB Garamond',serif;font-style:italic;color:rgba(245,243,238,.35);font-size:.85rem;margin:0; }
+.contact-social-label { font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(245,243,238,.35);margin:4px 0 6px; }
+.contact-social-btn { font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.1em;width:36px;height:36px;border:1px solid rgba(201,166,91,.2);background:rgba(201,166,91,.06);color:var(--samurai-gold,#C9A65B);display:inline-flex;align-items:center;justify-content:center;text-decoration:none;transition:all .18s; }
+.contact-social-btn:hover { background:rgba(201,166,91,.16);border-color:rgba(201,166,91,.4); }
+
+/* Progress scroll button (no SVG) */
+.progress-wrap { position:fixed;bottom:28px;right:28px;width:40px;height:40px;cursor:pointer;opacity:0;transition:opacity .3s;z-index:500;display:flex;align-items:center;justify-content:center;background:var(--panel-black,#0F0F10);border:1px solid rgba(201,166,91,.2); }
+.progress-wrap.active { opacity:1; }
+.progress-circle-wrap { display:none; }
+.progress-icon-text { font-family:'Cinzel',serif;font-size:.7rem;color:var(--samurai-gold,#C9A65B);letter-spacing:.02em; }
+
+/* Footer */
+.footer { background:#0A0A0B;border-top:1px solid rgba(201,166,91,.08);padding:20px 0; }
+.footer-content { max-width:var(--container-width,1200px);margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px; }
+.footer-logo { font-family:'Cinzel Decorative',serif;font-size:.72rem;color:#8E8C85;letter-spacing:.18em; }
+.footer-links { display:flex;gap:20px; }
+.footer-links a { font-family:'Cinzel',serif;font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:#8E8C85;text-decoration:none;transition:color .18s; }
+.footer-links a:hover { color:var(--samurai-gold,#C9A65B); }
+.footer-copy { font-family:'EB Garamond',serif;font-size:.82rem;color:rgba(138,138,133,.45);font-style:italic; }
+</style>
+
+<script>
+// Gallery
+document.addEventListener('DOMContentLoaded', function() {
+  var collections = {};
+  var activeLbPhotos = [], activeLbIndex = 0;
+  var modal = document.getElementById('gl-modal');
+  var thumbGrid = document.getElementById('gl-thumb-grid');
+  var lightbox = document.getElementById('gl-lightbox');
+  var backdrop = document.getElementById('gl-lb-backdrop');
+  var grid = document.getElementById('collections-grid');
+
+  function buildCard(key, data) {
+    var card = document.createElement('div');
+    card.className = 'collection-card-gl';
+    card.dataset.collection = key;
+    var coverSrc = data.coverSrc || (data.photos && data.photos[0] && data.photos[0].src) || '';
+    var imgInner = coverSrc
+      ? '<img src="' + coverSrc + '" alt="' + (data.title||key) + '" style="width:100%;height:100%;object-fit:cover;display:block;">'
+      : '<div style="font-family:Cinzel,serif;font-size:.6rem;letter-spacing:.1em;color:rgba(0,0,0,.25);">COLLECTION</div>';
+    card.innerHTML =
+      '<div class="cgl-img"><div class="cgl-img-ph">' + imgInner + '</div><div class="cgl-img-overlay"><span class="cgl-view-btn">View Collection</span></div></div>' +
+      '<div class="cgl-body"><span class="cgl-cat">Photo Collection</span><h3 class="cgl-title">' + (data.title||key) + '</h3><p class="cgl-desc">' + (data.description||'') + '</p>' +
+      '<div class="cgl-tags"><span class="cgl-tag">' + (data.photos?data.photos.length:0) + ' Photos</span></div></div>';
+    card.addEventListener('click', function() {
+      var coll = collections[key]; if (!coll||!coll.photos||!coll.photos.length) return;
+      document.getElementById('gl-modal-title').textContent = coll.title||key;
+      thumbGrid.innerHTML = '';
+      coll.photos.forEach(function(photo,idx) {
+        var th = document.createElement('div'); th.className = 'gl-thumb';
+        var img = document.createElement('img'); img.src = photo.src; img.alt = photo.title||'';
+        var ov = document.createElement('div'); ov.className = 'gl-thumb-ov';
+        var lbl = document.createElement('span'); lbl.className = 'gl-thumb-label'; lbl.textContent = photo.title||'';
+        ov.appendChild(lbl); th.appendChild(img); th.appendChild(ov);
+        th.addEventListener('click', function() { openLightbox(coll.photos,idx); });
+        thumbGrid.appendChild(th);
+      });
+      modal.classList.add('open'); document.body.style.overflow='hidden';
+    });
+    return card;
+  }
+  try {
+    if (typeof firebase==='undefined') return;
+    firebase.firestore().collection('gallery').get().then(function(snap) {
+      if(snap.empty) return;
+      snap.forEach(function(doc) {
+        var key=doc.id, data=doc.data();
+        if(!data.photos||!data.photos.length) return;
+        collections[key]=data; grid.appendChild(buildCard(key,data));
+      });
+    });
+  } catch(e) {}
+
+  document.getElementById('gl-modal-close').addEventListener('click', closeModal);
+  modal.addEventListener('click', function(e){ if(e.target===modal) closeModal(); });
+  function closeModal(){ modal.classList.remove('open'); document.body.style.overflow=''; }
+
+  function openLightbox(photos,index){ activeLbPhotos=photos; activeLbIndex=index; renderLightbox(); lightbox.classList.add('open'); backdrop.classList.add('open'); }
+  function renderLightbox() {
+    var photo=activeLbPhotos[activeLbIndex];
+    var wrap=document.getElementById('gl-lb-img-wrap'); wrap.innerHTML='';
+    var img=document.createElement('img'); img.src=photo.src; img.alt=photo.title||''; wrap.appendChild(img);
+    document.getElementById('gl-lb-caption').textContent=photo.caption||'';
+    document.getElementById('gl-lb-prev').style.visibility=activeLbIndex>0?'visible':'hidden';
+    document.getElementById('gl-lb-next').style.visibility=activeLbIndex<activeLbPhotos.length-1?'visible':'hidden';
+  }
+  document.getElementById('gl-lb-prev').addEventListener('click',function(){ if(activeLbIndex>0){activeLbIndex--;renderLightbox();} });
+  document.getElementById('gl-lb-next').addEventListener('click',function(){ if(activeLbIndex<activeLbPhotos.length-1){activeLbIndex++;renderLightbox();} });
+  document.getElementById('gl-lb-close').addEventListener('click', closeLightbox);
+  backdrop.addEventListener('click', closeLightbox);
+  function closeLightbox(){ lightbox.classList.remove('open'); backdrop.classList.remove('open'); }
+  document.addEventListener('keydown', function(e) {
+    if(e.key==='Escape'){ if(lightbox.classList.contains('open'))closeLightbox(); else if(modal.classList.contains('open'))closeModal(); }
+    if(lightbox.classList.contains('open')){
+      if(e.key==='ArrowLeft'&&activeLbIndex>0){activeLbIndex--;renderLightbox();}
+      if(e.key==='ArrowRight'&&activeLbIndex<activeLbPhotos.length-1){activeLbIndex++;renderLightbox();}
+    }
+  });
+});
+
+// Code projects
+(async () => {
+  var grid = document.getElementById('code-preview-grid');
+  var section = document.getElementById('code-section');
+  var CTA_HTML = '<a href="code.html" class="code-preview-card" style="justify-content:center;align-items:center;min-height:200px;border-style:dashed;text-decoration:none;"><div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:40px;gap:12px;"><div class="code-card-title">View all projects</div><div style="font-family:\'EB Garamond\',serif;font-style:italic;font-size:.9rem;color:#5A5852;">GitHub repos, tools &amp; experiments</div></div></a>';
+  var bannerMap = {'banner-green':'banner-green','banner-blue':'banner-blue','banner-moss':'banner-moss','banner-beige':'banner-beige','banner-teal':'banner-teal','banner-dark':'banner-dark'};
+  function renderCard(p) {
+    var status=p.status||'live';
+    var badgeStyle=status==='live'?'background:rgba(201,166,91,.12);color:#7a4b0d;':status==='wip'?'background:rgba(0,0,0,.06);color:#555;':'background:rgba(0,0,0,.1);color:#888;';
+    var tags=(p.tags||'').split(',').map(t=>t.trim()).filter(Boolean).slice(0,4);
+    var tagsHTML=tags.map(t=>'<span class="code-mini-tag">'+t+'</span>').join('');
+    var desc=p.description?'<p class="code-card-desc">'+p.description.slice(0,120)+(p.description.length>120?'&hellip;':'')+'</p>':'';
+    var imageBlock=p.imageURL?'<img src="'+p.imageURL+'" alt="'+p.title+'" style="width:100%;height:auto;display:block;max-height:180px;object-fit:cover;">':'<div class="code-card-banner '+(bannerMap[p.banner]||'banner-green')+'"><span class="code-card-icon">&#10022;</span></div>';
+    return '<a href="code.html" class="code-preview-card" style="text-decoration:none;"><div style="position:relative;">'+imageBlock+'<span class="code-card-badge" style="position:absolute;top:8px;right:8px;'+badgeStyle+'">'+(status==='live'?'Live':status==='wip'?'In Progress':'Archived')+'</span></div><div class="code-card-body"><div class="code-card-title">'+(p.title||'Untitled')+'</div>'+desc+(tags.length?'<div class="code-card-tags">'+tagsHTML+'</div>':'')+'</div></a>';
+  }
+  try {
+    var attempts=0;
+    while(typeof getMediaHubByCategory==='undefined'&&attempts<20){ await new Promise(r=>setTimeout(r,100)); attempts++; }
+    var items=await getMediaHubByCategory('code');
+    var projects=(items||[]).filter(p=>p.published!==false).slice(0,3);
+    if(!projects.length){ section.style.display='none'; return; }
+    grid.innerHTML=projects.map(renderCard).join('')+CTA_HTML;
+  } catch(e) { section.style.display='none'; }
+})();
+
+// Progress scroll
+(function(){
+  var wrap=document.getElementById('progressWrap');
+  window.addEventListener('scroll',function(){
+    var st=window.scrollY, dh=document.documentElement.scrollHeight-window.innerHeight;
+    wrap.classList.toggle('active', st>200);
+  },{passive:true});
+  wrap.addEventListener('click',function(){ window.scrollTo({top:0,behavior:'smooth'}); });
+})();
+</script>
+
+</body>
+</html>

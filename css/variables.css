@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cinzel+Decorative:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap');
+
+:root {
+  --ghost-crimson:   #D64545;
+  --dark-crimson:    #A93232;
+  --crimson-glow:    rgba(214, 69, 69, 0.15);
+
+  --samurai-gold:    #C9A65B;
+  --soft-gold:       #E2C98C;
+  --gold-glow:       rgba(201, 166, 91, 0.2);
+
+  --panel-black:     #0F0F10;
+  --panel-dark:      #1A1A1C;
+  --panel-mid:       #2B2B2E;
+  --panel-edge:      #3A3A3E;
+
+  --parchment-light: #F1EFE9;
+  --fog-white:       #E7E5DF;
+  --mist-bg:         #DCD9D1;
+  --parchment-dark:  #C8C4B8;
+
+  --ink-black:       #0A0A0B;
+  --deep-charcoal:   #111113;
+
+  --text-cream:      #F5F3EE;
+  --text-secondary:  #B8B5AD;
+  --text-muted:      #8E8C85;
+
+  /* ── Semantic mapping  ── */
+  --forest-green:    #C9A65B;     /* was green accent → now samurai gold */
+  --cream:           #F5F3EE;
+  --warm-beige:      #3A3A3E;     /* borders → dark panel edge */
+  --soft-blue:       #2B2B2E;     /* subtle bg → panel mid */
+  --dark-moss:       #0F0F10;     /* darkest bg → panel black */
+  --alert-red:       #D64545;
+
+  --bg-primary:      #F1EFE9;     /* main parchment */
+  --bg-surface:      #E7E5DF;     /* fog white panels */
+  --text-primary:    #111113;
+  --text-secondary:  #5A5852;
+
+  /* ── Typography ── */
+  --font-heading:    'Cinzel', serif;
+  --font-display:    'Cinzel Decorative', serif;
+  --font-body:       'EB Garamond', serif;
+  --font-ui:         'Cormorant Garamond', serif;
+  --font-semibold:   500;
+  --font-bold:       600;
+
+  --text-xs:   0.72rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-lg:   1.1rem;
+  --text-xl:   1.25rem;
+  --text-2xl:  1.5rem;
+  --text-3xl:  1.875rem;
+  --text-4xl:  2.25rem;
+  --text-5xl:  3rem;
+
+  /* ── Spacing ── */
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 3rem;
+  --space-xl: 5rem;
+
+  /* ── Layout ── */
+  --nav-height:      64px;
+  --container-width: 1200px;
+
+  /* ── Borders & Radius ── */
+  --border-width: 1px;
+  --radius-sm:    0px;
+  --radius-md:    2px;
+  --radius-lg:    4px;
+  --radius-full:  2px;    
+
+  /* ── Shadows — ink-style ── */
+  --shadow-soft:     0 1px 3px rgba(0,0,0,0.12), 0 1px 0 rgba(0,0,0,0.06);
+  --shadow-medium:   0 4px 16px rgba(0,0,0,0.18), 0 1px 0 rgba(0,0,0,0.1);
+  --shadow-hard:     4px 4px 0px rgba(0,0,0,0.22);
+  --shadow-floating: 0 8px 32px rgba(0,0,0,0.2), 0 2px 0 rgba(0,0,0,0.12);
+
+  /* ── Transitions ── */
+  --transition-fast:   0.18s ease;
+  --transition-normal: 0.28s ease;
+}

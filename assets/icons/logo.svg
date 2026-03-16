@@ -1,0 +1,6 @@
+<svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+  <rect width="44" height="44" fill="#0F0F10"/>
+  <rect x="0.75" y="0.75" width="42.5" height="42.5" fill="none" stroke="#C9A65B" stroke-width="1.5"/>
+  <text x="9" y="34" font-family="Georgia,serif" font-size="30" font-weight="700" fill="#F5F3EE" letter-spacing="-1">L</text>
+  <line x1="9" y1="38" x2="35" y2="38" stroke="#D64545" stroke-width="2" stroke-linecap="square"/>
+</svg>

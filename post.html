@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post — LINESBYLIN</title>
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cinzel+Decorative:wght@400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/page-enhancements.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/tsushima-theme.css">
+  <style>
+    #reading-progress-bar { position:fixed; top:0;left:0; height:2px; width:0%; background:linear-gradient(90deg,var(--ghost-crimson,#D64545),var(--samurai-gold,#C9A65B)); z-index:9999; transition:width .1s linear; }
+
+    .post-wrapper { max-width:760px; margin:0 auto; padding:64px 24px; }
+
+    .back-link { display:inline-flex; align-items:center; gap:6px; font-family:'Cinzel',serif; font-size:.58rem; font-weight:500; letter-spacing:.16em; text-transform:uppercase; color:var(--panel-black,#0F0F10); margin-bottom:40px; padding:8px 18px; border:1px solid rgba(0,0,0,.15); background:transparent; text-decoration:none; transition:all .18s; }
+    .back-link:hover { background:var(--panel-black,#0F0F10); color:var(--samurai-gold,#C9A65B); border-color:var(--panel-black,#0F0F10); }
+
+    .post-hero { width:100%; max-height:400px; object-fit:cover; display:block; margin-bottom:40px; border:1px solid rgba(0,0,0,.08); }
+
+    .post-meta { display:flex; align-items:center; gap:14px; margin-bottom:20px; flex-wrap:wrap; }
+    .post-category-badge { display:inline-flex; align-items:center; font-family:'Cinzel',serif; font-size:.56rem; font-weight:500; letter-spacing:.16em; text-transform:uppercase; color:var(--ghost-crimson,#D64545); padding:4px 12px; border:1px solid rgba(214,69,69,.25); background:rgba(214,69,69,.05); }
+    .post-date { font-family:'Cinzel',serif; font-size:.58rem; letter-spacing:.1em; text-transform:uppercase; color:#8E8C85; }
+    .post-read-time { font-family:'EB Garamond',serif; font-style:italic; font-size:.9rem; color:#8E8C85; }
+
+    .post-title { font-family:'Cinzel',serif; font-size:clamp(1.6rem,5vw,2.6rem); line-height:1.25; color:var(--panel-black,#0F0F10); margin-bottom:40px; font-weight:400; letter-spacing:.04em; }
+
+    .post-divider { border:none; border-top:1px solid rgba(0,0,0,.1); margin:0 0 40px; }
+
+    .post-body { font-family:'EB Garamond',serif; font-size:1.15rem; line-height:1.88; color:var(--panel-black,#0F0F10); }
+    .post-body p { margin-bottom:20px; }
+    .post-body h2 { font-family:'Cinzel',serif; font-size:1.2rem; letter-spacing:.06em; font-weight:400; margin:40px 0 14px; color:var(--panel-black,#0F0F10); }
+    .post-body h3 { font-family:'Cinzel',serif; font-size:1rem; letter-spacing:.06em; font-weight:400; margin:28px 0 10px; }
+    .post-body blockquote { border-left:3px solid var(--ghost-crimson,#D64545); padding:14px 20px; margin:28px 0; background:var(--fog-white,#E7E5DF); font-style:italic; }
+
+    /* Poem style */
+    .post-body.poem-style { font-family:'EB Garamond',serif; font-style:italic; text-align:center; max-width:500px; margin:0 auto; }
+    .post-body.poem-style .poem-stanza { margin-bottom:0; padding-bottom:40px; position:relative; }
+    .post-body.poem-style .poem-stanza p { margin:0; line-height:2.1; font-size:1.1rem; }
+    .post-body.poem-style .poem-stanza:not(:last-child)::after { content:''; display:block; width:20px; height:1px; background:var(--ghost-crimson,#D64545); margin:0 auto; position:absolute; bottom:20px; left:50%; transform:translateX(-50%); opacity:.4; }
+
+    /* Nav (prev/next) */
+    .post-nav { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:48px; padding-top:28px; border-top:1px solid rgba(0,0,0,.08); }
+    @media(max-width:600px){ .post-nav{ grid-template-columns:1fr; } }
+    .post-nav-btn { display:flex; flex-direction:column; gap:5px; font-family:'Cinzel',serif; color:var(--panel-black,#0F0F10); padding:16px 20px; border:1px solid rgba(0,0,0,.12); background:var(--fog-white,#E7E5DF); text-decoration:none; transition:all .18s; }
+    .post-nav-btn:hover { background:var(--panel-black,#0F0F10); color:var(--samurai-gold,#C9A65B); border-color:var(--panel-black,#0F0F10); transform:translate(-2px,-2px); box-shadow:4px 4px 0 rgba(0,0,0,.08); }
+    .post-nav-prev { align-items:flex-start; }
+    .post-nav-next { align-items:flex-end; }
+    .post-nav-label { font-size:.52rem; font-weight:500; text-transform:uppercase; letter-spacing:.16em; color:var(--ghost-crimson,#D64545); }
+    .post-nav-btn:hover .post-nav-label { color:var(--samurai-gold,#C9A65B); }
+    .post-nav-title { font-size:.88rem; line-height:1.35; letter-spacing:.04em; font-weight:400; }
+
+    .post-loading { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:40vh; gap:20px; color:#8E8C85; font-family:'EB Garamond',serif; font-style:italic; }
+    .post-not-found { text-align:center; padding:80px; color:#8E8C85; font-family:'Cinzel',serif; font-size:1.1rem; letter-spacing:.06em; }
+  </style>
+</head>
+<body>
+
+<div id="reading-progress-bar"></div>
+
+<nav class="nav">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">LINESBYLIN</a>
+    <ul class="nav-menu" id="nav-menu">
+      <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+      <li class="nav-item"><a href="index.html#about" class="nav-link">About</a></li>
+      <li class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle">Work</a>
+        <div class="dropdown-menu">
+          <a href="blog.html" class="dropdown-item">Blog</a>
+          <a href="poems.html" class="dropdown-item">Poems</a>
+          <a href="stories.html" class="dropdown-item">Stories</a>
+          <a href="biography.html" class="dropdown-item">Biography</a>
+          <a href="code.html" class="dropdown-item">Code</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle">MediaHub</a>
+        <div class="dropdown-menu">
+          <a href="beats.html" class="dropdown-item">Beats</a>
+          <a href="movies.html" class="dropdown-item">Movies</a>
+          <a href="tvshows.html" class="dropdown-item">Shows</a>
+        </div>
+      </li>
+      <li class="nav-item"><a href="dream-map.html" class="nav-link">Dreams</a></li>
+      <li class="nav-item"><a href="index.html#contact" class="nav-link">Contact</a></li>
+    </ul>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div class="post-wrapper">
+  <div id="post-container">
+    <div class="post-loading">
+      <div class="loading-spinner"></div>
+      <p>Loading post&hellip;</p>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-content">
+    <span class="footer-logo">LINESBYLIN</span>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="mediahub.html">MediaHub</a>
+    </div>
+  </div>
+</footer>
+
+<div class="progress-wrap" id="progressWrap"><span class="progress-icon-text">&#8593;</span></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+<script src="js/firebase.js"></script>
+<script src="js/main.js"></script>
+<script>
+  var catPages  = { blog:'blog.html', poem:'poems.html', story:'stories.html' };
+  var catNames  = { blog:'Blog', poem:'Poem', story:'Story' };
+
+  async function loadPost() {
+    var params = new URLSearchParams(window.location.search);
+    var id = params.get('id');
+    var container = document.getElementById('post-container');
+    if (!id) { container.innerHTML='<p class="post-not-found">No post specified.</p>'; return; }
+    try {
+      var post = await getPostById(id);
+      if (!post) throw new Error('not found');
+      var date = post.date ? new Date(post.date).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) : '';
+      var backPage = catPages[post.category]||'index.html';
+      var backLabel = catNames[post.category]||'Back';
+      var isPoem = post.category === 'poem';
+      document.title = post.title + ' — LINESBYLIN';
+      var sections = [];
+      if (Array.isArray(post.sections)) { sections = post.sections; }
+      else if (typeof post.sections === 'string') { try { sections = JSON.parse(post.sections); } catch(e) {} }
+      var bodyHTML = sections.map(s => renderSection(s, isPoem)).join('');
+      var plainText = sections.map(s => { var d=document.createElement('div'); d.innerHTML=s.content||''; return d.textContent||''; }).join(' ');
+      var wordCount = plainText.trim().split(/\s+/).filter(Boolean).length;
+      var readMins = Math.max(1, Math.round(wordCount/200));
+      container.innerHTML =
+        '<a href="'+backPage+'" class="back-link"> Back to '+backLabel+'s</a>' +
+        (post.imageURL ? '<img class="post-hero" src="'+post.imageURL+'" alt="'+post.title+'">' : '') +
+        '<div class="post-meta">' +
+          '<span class="post-category-badge">'+(catNames[post.category]||post.category)+'</span>' +
+          (date ? '<span class="post-date">'+date+'</span>' : '') +
+          '<span class="post-read-time">'+readMins+' min read</span>' +
+        '</div>' +
+        '<h1 class="post-title">'+post.title+'</h1>' +
+        '<hr class="post-divider">' +
+        '<div class="post-body'+(isPoem?' poem-style':'')+'">'+( bodyHTML||'<p>No content yet.</p>')+'</div>';
+      initReadingProgress();
+      loadAdjacentPosts(post);
+    } catch(e) {
+      container.innerHTML='<a href="index.html" class="back-link">&#8592; Home</a><p class="post-not-found">Post not found.</p>';
+    }
+  }
+
+  async function loadAdjacentPosts(post) {
+    if (typeof getPostsByCategory !== 'function') return;
+    try {
+      var allPosts = await getPostsByCategory(post.category);
+      allPosts.sort((a,b) => new Date(b.date||0)-new Date(a.date||0));
+      var idx = allPosts.findIndex(p => p.id === post.id);
+      var prev = idx < allPosts.length-1 ? allPosts[idx+1] : null;
+      var next = idx > 0 ? allPosts[idx-1] : null;
+      if (!prev && !next) return;
+      var nav = document.createElement('nav'); nav.className='post-nav'; nav.setAttribute('aria-label','Post navigation');
+      nav.innerHTML =
+        (prev ? '<a href="post.html?id='+prev.id+'" class="post-nav-btn post-nav-prev"><span class="post-nav-label">Previous</span><span class="post-nav-title">'+prev.title+'</span></a>' : '<div></div>') +
+        (next ? '<a href="post.html?id='+next.id+'" class="post-nav-btn post-nav-next"><span class="post-nav-label">Next</span><span class="post-nav-title">'+next.title+'</span></a>' : '<div></div>');
+      document.querySelector('.post-wrapper').appendChild(nav);
+    } catch(e) {}
+  }
+
+  function renderSection(sec, isPoem) {
+    switch(sec.type) {
+      case 'title':     return '<h2>'+( sec.content||'')+'</h2>';
+      case 'text':      return '<div>'+( sec.content||'')+'</div>';
+      case 'paragraph': return isPoem ? '<div class="poem-stanza">'+( sec.content||'')+'</div>' : '<div>'+( sec.content||'')+'</div>';
+      case 'quote':     return '<blockquote>'+( sec.content||'')+'</blockquote>';
+      case 'image':     return sec.content ? '<img src="'+sec.content+'" alt="'+(sec.alt||'')+'" style="width:100%;margin:20px 0;display:block;">' : '';
+      case 'divider':   return '<hr style="border:none;border-top:1px solid rgba(0,0,0,.1);margin:28px 0;">';
+      default:          return '<div>'+( sec.content||'')+'</div>';
+    }
+  }
+
+  function initReadingProgress() {
+    var bar = document.getElementById('reading-progress-bar');
+    var body = document.querySelector('.post-body');
+    if (!bar||!body) return;
+    function update() {
+      var bodyTop = body.getBoundingClientRect().top + window.scrollY;
+      var bodyBottom = body.getBoundingClientRect().bottom + window.scrollY;
+      var scrolled = window.scrollY + window.innerHeight - bodyTop;
+      var total = bodyBottom - bodyTop;
+      bar.style.width = Math.min(100,Math.max(0,(scrolled/total)*100))+'%';
+    }
+    window.addEventListener('scroll', update, {passive:true}); update();
+  }
+
+  document.addEventListener('DOMContentLoaded', loadPost);
+</script>
+</body>
+</html>
