@@ -579,7 +579,7 @@
       <div class="contact-right">
         <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;">
           <svg style="width:13px;height:13px;flex-shrink:0;opacity:0.5;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><rect x="2" y="4" width="20" height="16"/><polyline points="2 4 12 13 22 4"/></svg>
-          <a href="mailto:dinawanao.lixternino@ue.edu.ph" class="contact-link">dinawanao.lixternino@ue.edu.ph</a>
+          <a href="/cdn-cgi/l/email-protection#c9ada0a7a8bea8a7a8a6e7a5a0b1bdacbba7a0a7a689bcace7acadbce7b9a1" class="contact-link"><span class="__cf_email__" data-cfemail="14707d7a7563757a757b3a787d6c6071667a7d7a7b5461713a7170613a647c">[email&#160;protected]</span></a>
         </div>
         <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;">
           <svg style="width:13px;height:13px;flex-shrink:0;opacity:0.5;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
@@ -677,7 +677,7 @@
 
 </style>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 (function() {
   var items = [
     { text: 'Poems',              cls: 'gold'    },
@@ -730,11 +730,13 @@
 </footer>
 
 <div class="progress-wrap" id="progressWrap">
-  <div class="progress-circle-wrap">
-    <div class="progress-circle-track"></div>
-    <div class="progress-circle-fill" id="progressCircle"></div>
-  </div>
-  <span class="progress-icon-text" style="font-family:'Cinzel',serif;font-size:.65rem;color:#C9A65B;letter-spacing:.04em;">&#8593;</span>
+  <svg class="progress-circle svg-content" width="100%" height="100%" viewBox="-1 -1 102 102">
+    <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98"/>
+  </svg>
+  <svg class="progress-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="12" y1="19" x2="12" y2="5"/>
+    <polyline points="5 12 12 5 19 12"/>
+  </svg>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -838,11 +840,6 @@
 .contact-social-btn:hover { background:rgba(201,166,91,.16);border-color:rgba(201,166,91,.4); }
 
 /* Progress scroll button (no SVG) */
-.progress-wrap { position:fixed;bottom:28px;right:28px;width:40px;height:40px;cursor:pointer;opacity:0;transition:opacity .3s;z-index:500;display:flex;align-items:center;justify-content:center;background:var(--panel-black,#0F0F10);border:1px solid rgba(201,166,91,.2); }
-.progress-wrap.active { opacity:1; }
-.progress-circle-wrap { display:none; }
-.progress-icon-text { font-family:'Cinzel',serif;font-size:.7rem;color:var(--samurai-gold,#C9A65B);letter-spacing:.02em; }
-
 /* Footer */
 .footer { background:#0A0A0B;border-top:1px solid rgba(201,166,91,.08);padding:20px 0; }
 .footer-content { max-width:var(--container-width,1200px);margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px; }
@@ -961,8 +958,8 @@ document.addEventListener('DOMContentLoaded', function() {
 (function(){
   var wrap=document.getElementById('progressWrap');
   window.addEventListener('scroll',function(){
-    var st=window.scrollY, dh=document.documentElement.scrollHeight-window.innerHeight;
-    wrap.classList.toggle('active', st>200);
+ndow.scrollY, dh=document.documentElement.scrollHeight-window.innerHeight;
+    wrap.classList.toggle('active-progress', st>50);
   },{passive:true});
   wrap.addEventListener('click',function(){ window.scrollTo({top:0,behavior:'smooth'}); });
 })();

@@ -158,34 +158,37 @@ function initNav() {
 // ─── Back To Top ──────────────────────────────────────────────────────────────
 
 function initBackToTop() {
-  const btn = document.getElementById('progressWrap');
+  var btn = document.getElementById('progressWrap');
   if (!btn) return;
 
-  const path = btn.querySelector('.progress-circle path');
+  var path = btn.querySelector('.progress-wrap path') || btn.querySelector('.progress-circle path');
 
   if (path) {
-    // SVG version — animate stroke
-    const pathLength = path.getTotalLength();
-    path.style.strokeDasharray  = pathLength;
+    var pathLength = path.getTotalLength();
+    path.style.transition = 'none';
+    path.style.strokeDasharray  = pathLength + ' ' + pathLength;
     path.style.strokeDashoffset = pathLength;
+    path.getBoundingClientRect(); // force reflow
+    path.style.transition = 'stroke-dashoffset 10ms linear';
 
     function updateProgress() {
-      const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress  = pathLength - (scrollTop / docHeight) * pathLength;
+      var scroll  = window.scrollY;
+      var height  = document.documentElement.scrollHeight - window.innerHeight;
+      var progress = pathLength - (scroll * pathLength / height);
       path.style.strokeDashoffset = progress;
-      btn.classList.toggle('active', scrollTop > 200);
+      btn.classList.toggle('active-progress', scroll > 50);
     }
+
     window.addEventListener('scroll', updateProgress, { passive: true });
     updateProgress();
   } else {
-    // Plain div version — just show/hide on scroll
     window.addEventListener('scroll', function() {
-      btn.classList.toggle('active', window.scrollY > 200);
+      btn.classList.toggle('active-progress', window.scrollY > 50);
     }, { passive: true });
   }
 
-  btn.addEventListener('click', () => {
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 }
@@ -221,26 +224,28 @@ function initScrollSpy() {
   }
 
   function onScroll() {
-    const scrollY  = window.scrollY;
-    const winH     = window.innerHeight;
-    const threshold = winH * 0.4;
+    const scrollY   = window.scrollY;
+    const winH      = window.innerHeight;
+    const threshold = winH * 0.45;
 
-    // Contact
     if (contactEl && contactEl.getBoundingClientRect().top <= threshold) {
       setActive('index.html#contact');
       return;
     }
-    // About
     if (aboutEl && aboutEl.getBoundingClientRect().top <= threshold) {
       setActive('index.html#about');
       return;
     }
-    // Home (top of page or hero visible)
     setActive('index.html');
   }
 
   window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll(); // run once on load
+  // On load: always start with Home active at the top
+  setActive('index.html');
+  window.addEventListener('load', function() {
+    if (window.scrollY < 50) setActive('index.html');
+    else onScroll();
+  });
 }
 
 // ─── Featured Posts (Home) ────────────────────────────────────────────────────
@@ -526,8 +531,21 @@ function stripHTML(html) {
 document.querySelectorAll('a').forEach(link => {
   link.addEventListener('click', function(e) {
     const href = this.getAttribute('href');
+    if (!href) return;
+
+    // If clicking "Home" (index.html or index.html#) while already on index — just scroll top
+    const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+    const isOnIndex   = currentPath === 'index.html' || currentPath === '';
+    const hrefBase    = href.split('#')[0] || 'index.html';
+    const isHomeLink  = hrefBase === 'index.html' || hrefBase === '';
+
+    if (isOnIndex && isHomeLink && !href.includes('#')) {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
     if (
-      href &&
       !href.startsWith('#') &&
       !href.startsWith('mailto') &&
       !href.startsWith('javascript') &&

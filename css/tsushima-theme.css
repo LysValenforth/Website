@@ -562,15 +562,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 .footer-links a:hover { color: var(--samurai-gold) !important; }
 
-/* PROGRESS SCROLL BUTTON*/
-.progress-wrap {
-  background: var(--panel-black) !important;
-  border: 1px solid rgba(201,166,91,0.2) !important;
-  border-radius: 0 !important;
-  box-shadow: 4px 4px 0 rgba(0,0,0,0.2) !important;
-}
-.progress-wrap path { stroke: var(--samurai-gold) !important; }
-.progress-wrap .progress-icon svg { stroke: var(--samurai-gold) !important; }
+/* PROGRESS SCROLL BUTTON — see SCROLL-TO-TOP block */
 
 /* BEATS — music player cards */
 .beat-card {
@@ -607,19 +599,85 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .beat-cover {
-  border-radius: 2px !important;   /* square when not playing */
+  border-radius: 2px !important;
   border: 1px solid rgba(0,0,0,0.1) !important;
-  transition: border-radius 0.4s ease !important;
+  transition: border-radius 0.5s ease, -webkit-mask-image 0.5s ease, box-shadow 0.4s ease !important;
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
 }
-/* When playing: morph into circle (CD) and spin */
+
+/* When playing: CD effect — circle shape with centre hole */
 .beat-card.is-playing .beat-cover {
   border-radius: 50% !important;
   animation: vinyl-spin 10s linear infinite !important;
+  /* Radial gradient mask: transparent hole in centre, opaque ring, transparent outside */
+  -webkit-mask-image: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 17%,
+    black 18%,
+    black 82%,
+    transparent 83%
+  ) !important;
+  mask-image: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 17%,
+    black 18%,
+    black 82%,
+    transparent 83%
+  ) !important;
+  box-shadow:
+    0 0 0 2px rgba(201,166,91,0.6),
+    inset 0 0 12px rgba(0,0,0,0.5),
+    0 8px 24px rgba(0,0,0,0.3) !important;
 }
+
 .beat-card.is-playing .beat-cover-fallback {
   border-radius: 50% !important;
   animation: vinyl-spin 10s linear infinite !important;
+  -webkit-mask-image: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 17%,
+    black 18%,
+    black 82%,
+    transparent 83%
+  ) !important;
+  mask-image: radial-gradient(
+    circle,
+    transparent 0%,
+    transparent 17%,
+    black 18%,
+    black 82%,
+    transparent 83%
+  ) !important;
 }
+
+/* CD centre pin dot — shown when playing */
+.beat-cover-wrap {
+  position: relative !important;
+}
+.beat-cover-wrap::after {
+  content: '' !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 50% !important;
+  background: rgba(201,166,91,0.9) !important;
+  box-shadow: 0 0 6px rgba(201,166,91,0.6) !important;
+  opacity: 0 !important;
+  z-index: 3 !important;
+  pointer-events: none !important;
+  transition: opacity 0.4s ease !important;
+}
+.beat-card.is-playing .beat-cover-wrap::after {
+  opacity: 1 !important;
+}
+
 @keyframes vinyl-spin {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
@@ -829,13 +887,57 @@ h1, h2, h3, h4, h5, h6 {
   height: 2px !important;
 }
 
-/* SCROLL-TO-TOP*/
+/* SCROLL-TO-TOP */
 .progress-wrap {
-  width: 40px !important;
-  height: 40px !important;
-  bottom: 28px !important;
+  position: fixed !important;
   right: 28px !important;
+  bottom: 28px !important;
+  height: 46px !important;
+  width: 46px !important;
+  cursor: pointer !important;
+  display: block !important;
+  border-radius: 50px !important;
+  box-shadow: inset 0 0 0 2px rgba(214,69,69,0.35) !important;
+  z-index: 10000 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transform: translateY(15px) !important;
+  transition: all 200ms linear !important;
+  background: transparent !important;
 }
+.progress-wrap.active-progress {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) !important;
+}
+.progress-wrap:hover {
+  box-shadow: inset 0 0 0 2px rgba(214,69,69,0.8) !important;
+}
+/* SVG progress ring — crimson */
+.progress-wrap svg.progress-circle path {
+  fill: none !important;
+  stroke: #D64545 !important;
+  stroke-width: 4 !important;
+  box-sizing: border-box !important;
+  transition: all 200ms linear !important;
+}
+/* Arrow SVG — crimson, centered */
+.progress-wrap .progress-arrow {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 1 !important;
+  display: block !important;
+  pointer-events: none !important;
+  stroke: #D64545 !important;
+  transition: all 200ms linear !important;
+}
+.progress-wrap:hover .progress-arrow {
+  stroke: #fff !important;
+}
+.progress-wrap::before,
+.progress-wrap::after { display: none !important; }
 
 /* NAV TOGGLE — mobile hamburger */
 .nav-toggle span { background: rgba(245, 243, 238, 0.9) !important; }

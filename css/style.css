@@ -1319,9 +1319,12 @@ img {
 
 /* ── Pagination ───────────────────────────────── */
 @media (max-width: 480px) {
-  .pagination { gap: 4px; }
-  .pagination-btn { padding: 0.35rem 0.7rem; font-size: 0.8rem; }
+  .pagination { gap: 4px; flex-wrap: nowrap; justify-content: center; }
+  .pagination-btn { padding: 0.35rem 0.65rem; font-size: 0.78rem; min-width: 2rem; }
   .pagination-info { display: none; }
+  /* On mobile hide number buttons, show only prev/next + active */
+  .pagination-num:not(.active) { display: none; }
+  .pagination-num.active { display: inline-flex; }
 }
 
 /* ── Progress / Back to top ───────────────────── */
