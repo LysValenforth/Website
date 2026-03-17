@@ -1060,7 +1060,7 @@
       padding: 6px 4px;
       border-radius: 0;
       transition: all var(--tr);
-      color: rgba(245,243,238,.3);
+      color: rgba(245,243,238,.55);
       font-family: 'Cinzel', serif;
       font-size: .5rem;
       font-weight: 400;
@@ -1270,14 +1270,21 @@
       .bnav { display:flex }
       body { padding-bottom:var(--bnav) }
       #toast { bottom:calc(var(--bnav) + 14px) }
+      /* Hide topbar buttons that are duplicated in bottom nav */
+      #listBtn { display:none !important; }
+      .sep { display:none !important; }
 
-      /* Hint pill — larger, more readable */
-      .map-hint { 
-        bottom: calc(var(--bnav) + 18px);
-        font-size: .95rem;
-        padding: 10px 22px;
-        gap: 8px;
-        background: rgba(30,40,24,.88);
+      /* Hint pill — compact, dark, auto-width */
+      .map-hint {
+        bottom: calc(var(--bnav) + 12px);
+        font-size: .58rem;
+        padding: 8px 16px;
+        gap: 6px;
+        background: #0F0F10;
+        width: auto;
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
       }
 
       /* Legend — compact horizontal strip pinned top-right on mobile */
@@ -1290,14 +1297,14 @@
         align-items: center;
         padding: 6px 10px;
         gap: 10px;
-        border-radius: 20px;
-        background: rgba(10,10,11,.95);
+        border-radius: 0;
+        background: #0F0F10;
         border: 1px solid rgba(201,166,91,.15);
       }
       /* Hide the "MAP KEY" title label on mobile — no space for it */
       .map-legend::before { display: none; }
-      .legend-item { font-size: .78rem; gap: 5px; font-weight: 600; }
-      .legend-dot  { width: 12px; height: 12px; border-radius: 3px; }
+      .legend-item { font-size: .52rem; gap: 5px; font-weight: 400; letter-spacing: .08em; }
+      .legend-dot  { width: 9px; height: 9px; border-radius: 0; }
 
       .ep { width:100%; min-width:0; height:92vh; top:auto; bottom:0; transform:translateY(100%); border-right:none; border-top:var(--bd); border-radius:22px 22px 0 0 }
       .ep.open { transform:translateY(0); animation:slideUp .35s cubic-bezier(.32,.72,0,1) }
