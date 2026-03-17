@@ -33,8 +33,8 @@
       --nav:       60px;
       --bnav:      60px;
       --map-default:  #2A2A2E;
-      --map-dream:    #8B6914;
-      --map-visited:  #4a3520;
+      --map-dream:    #C9A65B;
+      --map-visited:  #D64545;
       --map-border:   rgba(201,166,91,.3);
     }
 
@@ -93,19 +93,12 @@
       gap: 14px;
       flex-shrink: 0;
       z-index: 100;
-      box-shadow: 0 1px 0 rgba(46,64,40,.06), 0 2px 12px rgba(46,64,40,.04);
+      box-shadow: 0 1px 0 rgba(0,0,0,.06), 0 2px 12px rgba(0,0,0,.04);
       position: relative;
     }
 
-    /* subtle green top accent line */
-    .topbar::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, #D64545, #C9A65B, transparent);
-      opacity: .6;
-    }
+    /* topbar top accent line — removed */
+    .topbar::before { display: none; }
 
     .logo {
       font-family: 'Cinzel Decorative', serif;
@@ -185,7 +178,7 @@
     }
     .ed-badge.visible { display:flex }
     .sdot { width:7px; height:7px; border-radius:50%; background:var(--blue); flex-shrink:0 }
-    .sdot.saved   { background: #7ecf7e }
+    .sdot.saved   { background: #C9A65B }
     .sdot.saving  { background: #e8a838; animation: pulse 1s infinite }
     .ib { background:none; border:none; cursor:pointer; display:flex; align-items:center; padding:2px; color:inherit; opacity:.75; transition:opacity var(--tr) }
     .ib:hover { opacity:1 }
@@ -231,7 +224,7 @@
       top: 0; left: 0;
       height: 100%;
       z-index: 50;
-      box-shadow: 4px 0 24px rgba(46,64,40,.12);
+      box-shadow: 4px 0 24px rgba(0,0,0,.12);
     }
     .ep.open { transform:translateX(0) }
 
@@ -504,7 +497,7 @@
     .btn-d:hover { background:rgba(214,69,69,.1); border-color:#D64545; color:#D64545; }
 
     /* ── Map ─────────────────────────────────────────────────────────────── */
-    .map-area { flex:1; background:#0F0F10; position:relative; overflow:hidden }
+    .map-area { flex:1; background:#E8E2D4; position:relative; overflow:hidden }
     #main { width:100%; height:100% }
 
     .map-hint {
@@ -512,8 +505,8 @@
       bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(10,10,11,.9);
-      color: rgba(245,243,238,.8);
+      background: #0F0F10;
+      color: rgba(245,243,238,.85);
       font-family: 'Cinzel', serif;
       font-size: .58rem;
       letter-spacing: .14em;
@@ -521,14 +514,13 @@
       padding: 8px 20px;
       border-radius: 0;
       pointer-events: none;
-      backdrop-filter: blur(8px);
       display: flex;
       align-items: center;
       gap: 7px;
       transition: opacity .4s ease;
       white-space: nowrap;
-      border: 1px solid rgba(255,255,255,.15);
-      box-shadow: 0 4px 20px rgba(0,0,0,.2);
+      border: 1px solid rgba(201,166,91,.2);
+      box-shadow: 0 4px 20px rgba(0,0,0,.3);
     }
     .map-hint.hidden { opacity:0; pointer-events:none }
 
@@ -537,8 +529,8 @@
       position: absolute;
       bottom: 20px;
       right: 20px;
-      background: rgba(10,10,11,.9);
-      border: 1px solid rgba(201,166,91,.15);
+      background: rgba(15,15,16,0.88);
+      border: 1px solid rgba(201,166,91,.2);
       border-radius: 0;
       padding: 10px 14px;
       display: flex;
@@ -546,7 +538,7 @@
       gap: 7px;
       backdrop-filter: blur(8px);
       pointer-events: none;
-      box-shadow: 0 2px 16px rgba(46,64,40,.1), var(--sh);
+      box-shadow: 0 2px 16px rgba(0,0,0,.15);
     }
 
     /* legend title */
@@ -562,7 +554,7 @@
       font-family: var(--b);
     }
 
-    .legend-item { display:flex; align-items:center; gap:8px; font-family:'Cinzel',serif; font-size:.52rem; letter-spacing:.1em; text-transform:uppercase; color:rgba(245,243,238,.5); font-weight:400; }
+    .legend-item { display:flex; align-items:center; gap:8px; font-family:'Cinzel',serif; font-size:.52rem; letter-spacing:.1em; text-transform:uppercase; color:rgba(245,243,238,.7); font-weight:400; }
     .legend-dot { width:12px; height:12px; border-radius:0; flex-shrink:0; border:1px solid rgba(201,166,91,.2); }
 
     /* ── Viewer Right Panel ──────────────────────────────────────────────── */
@@ -575,7 +567,7 @@
       flex-direction: column;
       overflow: hidden;
       transition: width .3s ease;
-      box-shadow: -2px 0 16px rgba(46,64,40,.06);
+      box-shadow: -2px 0 16px rgba(0,0,0,.06);
     }
 
     .vp-hd {
@@ -836,7 +828,7 @@
       align-items: center;
       justify-content: space-between;
       flex-shrink: 0;
-      box-shadow: 0 2px 12px rgba(46,64,40,.06);
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
       position: relative;
     }
     .list-hd::before {
@@ -994,7 +986,7 @@
       justify-content: center;
       margin: 0 auto 14px;
       border: var(--bd);
-      box-shadow: 0 4px 16px rgba(46,64,40,.1);
+      box-shadow: 0 4px 16px rgba(0,0,0,.1);
     }
 
     .lock-title { font-family:'Cinzel Decorative',serif; font-size:1.1rem; color:#0F0F10; margin-bottom:5px; letter-spacing:.06em; }
@@ -1053,7 +1045,7 @@
       align-items: center;
       justify-content: space-around;
       padding: 0 10px;
-      box-shadow: 0 -2px 16px rgba(46,64,40,.08);
+      box-shadow: 0 -2px 16px rgba(0,0,0,.08);
     }
     .bnav-btn {
       flex: 1;
@@ -1169,7 +1161,7 @@
       gap: 8px;
       padding: 6px 18px 10px;
       flex-shrink: 0;
-      border-bottom: 1px solid rgba(46,64,40,.08);
+      border-bottom: 1px solid rgba(0,0,0,.08);
       min-height: 36px;
     }
     .bs-preview:empty { display: none; }
@@ -1222,7 +1214,7 @@
       max-width: 260px;
       width: 85%;
       pointer-events: none;
-      box-shadow: 0 4px 24px rgba(46,64,40,.12);
+      box-shadow: 0 4px 24px rgba(0,0,0,.12);
       z-index: 10;
       animation: popIn .4s cubic-bezier(.32,.72,0,1) .6s both;
     }
@@ -1254,7 +1246,7 @@
     .map-backdrop {
       position: absolute;
       inset: 0;
-      background: rgba(20,32,18,.35);
+      background: rgba(0,0,0,.35);
       opacity: 0;
       pointer-events: none;
       transition: opacity .3s ease;
@@ -1274,13 +1266,13 @@
     @media (max-width: 768px) {
       :root { --nav:50px }
       .layout { flex-direction:column }
-      .map-area { flex:1; background:#0F0F10; }
+      .map-area { flex:1; background:#E8E2D4; }
       .bnav { display:flex }
       body { padding-bottom:var(--bnav) }
       #toast { bottom:calc(var(--bnav) + 14px) }
 
       /* Hint pill — larger, more readable */
-      .map-hint {
+      .map-hint { 
         bottom: calc(var(--bnav) + 18px);
         font-size: .95rem;
         padding: 10px 22px;
@@ -1500,7 +1492,29 @@
     </div>
     <!-- First-visit empty state overlay (hidden once a country is tapped or data exists) -->
     <div class="map-empty-state" id="mapEmptyState">
-      <div class="mes-icon">🌍</div>
+      <div class="mes-icon">
+        <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Outer circle (globe) -->
+          <circle cx="26" cy="26" r="24" stroke="rgba(201,166,91,0.5)" stroke-width="1" fill="rgba(201,166,91,0.06)"/>
+          <!-- Latitude lines -->
+          <ellipse cx="26" cy="26" rx="24" ry="10" stroke="rgba(201,166,91,0.2)" stroke-width="0.8" fill="none"/>
+          <line x1="2" y1="26" x2="50" y2="26" stroke="rgba(201,166,91,0.2)" stroke-width="0.8"/>
+          <!-- Longitude lines -->
+          <ellipse cx="26" cy="26" rx="10" ry="24" stroke="rgba(201,166,91,0.2)" stroke-width="0.8" fill="none"/>
+          <ellipse cx="26" cy="26" rx="18" ry="24" stroke="rgba(201,166,91,0.15)" stroke-width="0.6" fill="none"/>
+          <!-- Continent shapes — simplified landmass silhouettes -->
+          <!-- Americas -->
+          <path d="M14 16 C13 18 12 22 13 26 C14 30 13 33 14 35 C15 37 16 36 17 34 C18 32 18 28 17 25 C16 22 16 18 15 16 Z" fill="rgba(201,166,91,0.55)" stroke="none"/>
+          <!-- Europe/Africa -->
+          <path d="M24 14 C23 16 23 19 24 21 C25 23 24 25 25 27 C26 30 26 34 27 36 C28 33 28 29 27 26 C26 23 27 20 26 17 C25 15 25 13 24 14 Z" fill="rgba(201,166,91,0.55)" stroke="none"/>
+          <!-- Asia -->
+          <path d="M29 15 C28 17 29 20 31 22 C33 24 35 23 36 21 C37 19 37 17 36 15 C35 14 33 14 31 14 C30 14 29 14 29 15 Z" fill="rgba(201,166,91,0.55)" stroke="none"/>
+          <!-- SE Asia / Australia hint -->
+          <path d="M33 28 C32 30 33 32 35 32 C36 31 36 29 35 28 C34 27 33 27 33 28 Z" fill="rgba(201,166,91,0.4)" stroke="none"/>
+          <!-- Crimson centre dot — the pin -->
+          <circle cx="26" cy="26" r="2.5" fill="#D64545" opacity="0.8"/>
+        </svg>
+      </div>
       <div class="mes-title">Start your dream map</div>
       <div class="mes-sub">Tap any country to mark it as a dream destination or a place you've visited</div>
       <div class="mes-arrow">
@@ -1811,7 +1825,7 @@ fetch('https://s3-us-west-2.amazonaws.com/s.cdpn.io/95368/world.json')
         label: { show: false },
         emphasis: {
           label: { show: true, color: '#1a2e1a', fontWeight: 'bold', fontSize: isMob ? 13 : 11 },
-          itemStyle: { areaColor: '#C9A65B', borderColor: '#8B6914', borderWidth: 1.5, shadowColor: 'rgba(201,166,91,.3)', shadowBlur: 8 }
+          itemStyle: { areaColor: '#C9A65B', borderColor: '#8B6914', borderWidth: 1.5, shadowColor: 'rgba(201,166,91,.4)', shadowBlur: 10 }
         },
         select: {
           label: { show: true, color: '#fff', fontSize: isMob ? 13 : 11, fontWeight: 'bold' },
@@ -1819,7 +1833,7 @@ fetch('https://s3-us-west-2.amazonaws.com/s.cdpn.io/95368/world.json')
         },
         selectedMode: 'single',
         // Stronger country fill + borders so they read clearly on mobile
-        itemStyle: { areaColor: '#1E1E22', borderColor: 'rgba(201,166,91,.2)', borderWidth: 0.8 }
+        itemStyle: { areaColor: '#2C2A24', borderColor: 'rgba(201,166,91,.35)', borderWidth: 0.7 }
       }]
     });
     chart.on('click', p => { if (p.componentType === 'series') selectCountry(p.name); });
